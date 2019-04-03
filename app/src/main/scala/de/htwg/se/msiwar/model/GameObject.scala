@@ -2,7 +2,7 @@ package de.htwg.se.msiwar.model
 
 import de.htwg.se.msiwar.util.Direction.Direction
 
-abstract case class GameObject(name: String, imagePath: String, position: Position)
+abstract class GameObject(val name: String, val imagePath: String, val position: Position)
 
 case class BlockObject(override val name: String, override val imagePath: String, override val position: Position) extends GameObject(name, imagePath, position)
 
