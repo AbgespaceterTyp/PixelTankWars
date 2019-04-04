@@ -12,7 +12,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerEmptyMapScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.turnCounter should be(1)
   }
@@ -21,7 +20,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerEmptyMapScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.winnerId.isDefined should be(false)
   }
@@ -30,7 +28,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.loadInstantWinScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.winnerId.isDefined should be(true)
   }
@@ -39,7 +36,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.loadInstantWinScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.canExecuteAction(1, Direction.DOWN) should be(false)
   }
@@ -48,7 +44,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerDamageTestScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.activePlayerHealthPoints should be(3)
   }
@@ -57,7 +52,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerEmptyMapScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.rowCount should be(10)
   }
@@ -66,7 +60,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerEmptyMapScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.columnCount should be(2)
   }
@@ -75,7 +68,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerEmptyMapScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.scenarioIds.size should be(2)
   }
@@ -84,7 +76,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerEmptyMapScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
 
     val scenarioNameFound = model.scenarioName(0)
@@ -96,7 +87,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerEmptyMapScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     val scenarioNameNotFound = model.scenarioName(3)
     scenarioNameNotFound.isDefined should be(false)
@@ -106,7 +96,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerEmptyMapScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.wonImagePath should be("")
   }
@@ -115,7 +104,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerDamageTestScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.actionDamage(2) should be(2)
   }
@@ -124,7 +112,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerDamageTestScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.actionDamage(1) should be(0)
   }
@@ -133,7 +120,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerDamageTestScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.actionRange(2) should be(3)
   }
@@ -142,7 +128,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerDamageTestScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.actionRange(1) should be(0)
   }
@@ -151,7 +136,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerDamageTestScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.actionPointCost(2) should be(1)
   }
@@ -160,7 +144,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerDamageTestScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.actionPointCost(1) should be(0)
   }
@@ -169,7 +152,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerDamageTestScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.actionDescription(2) should be("Shoot")
   }
@@ -178,7 +160,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerDamageTestScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.actionDescription(1) should be("")
   }
@@ -187,7 +168,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerDamageTestScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.actionIconPath(2).isDefined should be(true)
   }
@@ -196,7 +176,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerDamageTestScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.actionIconPath(1).isDefined should be(false)
   }
@@ -205,7 +184,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerDamageTestScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.activePlayerName should be("Player1")
   }
@@ -214,7 +192,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerEmptyMapScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.executeAction(2, Direction.DOWN)
     model.canExecuteAction(2, Direction.DOWN) should be(true)
@@ -224,7 +201,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerSmallMapScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.executeAction(2, Direction.UP)
     model.canExecuteAction(2, Direction.UP) should be(true)
@@ -234,7 +210,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerEmptyMapScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.executeAction(1, Direction.DOWN)
     model.canExecuteAction(1, Direction.DOWN) should be(true)
@@ -244,7 +219,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerEmptyMapScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.lastExecutedActionId.isDefined should be(false)
   }
@@ -253,7 +227,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerEmptyMapScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.cellsInRange(Option.empty[Int]) should be (List())
   }
@@ -262,7 +235,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerSmallMapScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.cellContentToText(2,0) should be ("X")
   }
@@ -271,7 +243,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerSmallMapScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.cellContentToText(0,0) should be ("B")
   }
@@ -280,7 +251,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerSmallMapScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.cellContentImagePath(2,0) should be (Option.empty[String])
   }
@@ -289,7 +259,6 @@ class ModelSpec extends FlatSpec with Matchers {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerSmallMapScenario()
 
-    val player = testConfigProvider.gameObjects.collect({ case s: PlayerObject => s }).find(_.playerNumber == 1).get
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.cellContentImagePath(0,0).isDefined should be (true)
     model.cellContentImagePath(0,0).get should be ("images/block_wood.png")

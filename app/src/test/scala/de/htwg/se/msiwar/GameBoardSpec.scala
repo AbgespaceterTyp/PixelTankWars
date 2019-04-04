@@ -7,20 +7,7 @@ import org.scalatest.{FlatSpec, Matchers}
 
 
 class GameBoardSpec extends FlatSpec with Matchers {
-
-  GameBoard.getClass.getSimpleName should "throw IllegalArgumentException when column or row count is negative" in {
-    a[IllegalArgumentException] should be thrownBy {
-      GameBoard(-1, 1, List())
-    }
-    a[IllegalArgumentException] should be thrownBy {
-      GameBoard(1, -1, List())
-    }
-    a[IllegalArgumentException] should be thrownBy {
-      GameBoard(-1, -1, List())
-    }
-
-  }
-
+  
   it should "return LEFT_UP for the given positions" in {
     val direction = GameBoard(10, 10, List()).calculateDirection(Position(1, 1), Position(0, 0))
 
