@@ -91,36 +91,12 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
             val oldPosition = newActivePlayer.position
             newGameBoard = newGameBoard.moveGameObject(newActivePlayer, newPosition)
             newActivePlayer = newActivePlayer.copy(position = newPosition)
-            events = events.::(CellChanged(List((newPosition.rowIdx, newPosition.columnIdx), (oldPosition.rowIdx, oldPosition.columnIdx))))
+            events = events.:+(CellChanged(List((newPosition.rowIdx, newPosition.columnIdx), (oldPosition.rowIdx, oldPosition.columnIdx))))
           }
         case SHOOT =>
-          // TODO move to sub functions
-          val positionForDirection = newGameBoard.calculatePositionForDirection(newActivePlayer.position, direction, actionToExecute.range)
-          if (positionForDirection.isDefined) {
-            val collisionObjectOpt = newGameBoard.collisionObject(newActivePlayer.position, positionForDirection.get, ignoreLastPosition = false)
-            if (collisionObjectOpt.isDefined) {
-              val collisionObject = collisionObjectOpt.get
-              collisionObject match {
-                case playerCollisionObject: PlayerObject =>
-                  val updatedPlayerCollisionObject = playerCollisionObject.copy(healthPoints = playerCollisionObject.healthPoints - actionToExecute.damage)
-                  newGameBoard = newGameBoard.placeGameObject(updatedPlayerCollisionObject)
-                  // Remove player if dead
-                  if (updatedPlayerCollisionObject.healthPoints <= 0) {
-                    newGameBoard = newGameBoard.removeGameObject(updatedPlayerCollisionObject)
-                  }
-                  events = events.::(CellChanged(List((playerCollisionObject.position.rowIdx, playerCollisionObject.position.columnIdx), (updatedPlayerCollisionObject.position.rowIdx, updatedPlayerCollisionObject.position.columnIdx))))
-                case _ => events = events.::(CellChanged(List((newActivePlayer.position.rowIdx, newActivePlayer.position.columnIdx))))
-              }
-              events = events.::(AttackResult(collisionObject.position.rowIdx, collisionObject.position.columnIdx, hit = true, gameConfigProvider.attackImagePath, gameConfigProvider.attackSoundPath))
-            } else {
-              val targetPositionOpt = newGameBoard.calculatePositionForDirection(newActivePlayer.position, direction, actionToExecute.range)
-              if (targetPositionOpt.isDefined) {
-                val targetPosition = targetPositionOpt.get
-                events = events.::(CellChanged(List((newActivePlayer.position.rowIdx, newActivePlayer.position.columnIdx))))
-                events = events.::(AttackResult(targetPosition.rowIdx, targetPosition.columnIdx, hit = false, gameConfigProvider.attackImagePath, gameConfigProvider.attackSoundPath))
-              }
-            }
-          }
+          val shootResult = executeShoot(newActivePlayer, newGameBoard, actionToExecute, direction)
+          newGameBoard = shootResult._1
+          events = shootResult._2:::events
         case WAIT => // Do nothing
       }
       newGameBoard = newGameBoard.placeGameObject(newActivePlayer.copy(actionPoints = newActivePlayer.actionPoints - actionToExecute.actionPoints))
@@ -135,6 +111,53 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
       (copy(gameConfigProvider, newGameBoard, Option(actionToExecute), nextTurn._1, nextTurn._2), events)
     } else {
       (this, List[Event]())
+    }
+  }
+
+  private def executeShoot(player: PlayerObject, gameBoard: GameBoard, shootAction: Action, direction: Direction): (GameBoard, List[Event]) = {
+    var newGameBoard: GameBoard = gameBoard
+    var events: List[Event] = List[Event]()
+
+    newGameBoard.calculatePositionForDirection(player.position, direction, shootAction.range) match {
+      case Some(positionForDirection) => {
+        newGameBoard.collisionObject(player.position, positionForDirection, ignoreLastPosition = false) match {
+          case Some(collisionObject) => {
+            val hitResult = playerHit(collisionObject,gameBoard,shootAction)
+            newGameBoard = hitResult._1
+            events = hitResult._2:::events
+            events = events.:+(AttackResult(collisionObject.position.rowIdx, collisionObject.position.columnIdx, hit = true, gameConfigProvider.attackImagePath, gameConfigProvider.attackSoundPath))
+          }
+          case None => events = nothingHit(newGameBoard, player.position, direction, shootAction):::events
+        }
+      }
+      case None =>
+    }
+    (newGameBoard, events)
+  }
+
+  private def playerHit(collisionObject : GameObject, gameBoard: GameBoard, shootAction: Action) : (GameBoard, List[Event]) = {
+    collisionObject match {
+      case playerObjectHit: PlayerObject =>
+        val newGameBoard = damageAndRemoveDeadPlayer(playerObjectHit, gameBoard,  shootAction)
+        (newGameBoard, List(CellChanged(List((playerObjectHit.position.rowIdx, playerObjectHit.position.columnIdx), (playerObjectHit.position.rowIdx, playerObjectHit.position.columnIdx)))))
+      case blockObject: BlockObject => (gameBoard, List(CellChanged(List((blockObject.position.rowIdx, blockObject.position.columnIdx)))))
+    }
+  }
+
+  private def nothingHit(gameBoard: GameBoard, startingPosition: Position, viewDirection: Direction, shootAction: Action): List[Event] = {
+    gameBoard.calculatePositionForDirection(startingPosition, viewDirection, shootAction.range) match {
+      case Some(targetPosition) => List(CellChanged(List((startingPosition.rowIdx, startingPosition.columnIdx))),
+        AttackResult(targetPosition.rowIdx, targetPosition.columnIdx, hit = false, gameConfigProvider.attackImagePath, gameConfigProvider.attackSoundPath))
+      case None => List()
+    }
+  }
+
+  private def damageAndRemoveDeadPlayer(playerObject: PlayerObject, gameBoard: GameBoard, shootAction: Action) : GameBoard = {
+    val updatedPlayerObject = playerObject.copy(healthPoints = playerObject.healthPoints - shootAction.damage)
+    if (updatedPlayerObject.healthPoints <= 0) {
+      gameBoard.removeGameObject(updatedPlayerObject)
+    } else {
+      gameBoard.placeGameObject(updatedPlayerObject)
     }
   }
 
