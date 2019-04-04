@@ -1,3 +1,5 @@
+![Build Status](https://travis-ci.org/AbgespaceterTyp/PixelTankWars.svg?branch=master)
+
 # PixelTankWars
 
 ![Alt-Text](https://github.com/AbgespaceterTyp/PixelTankWars/blob/master/app/src/main/resources/images/background_opening.png "Pixel Tank Wars")
