@@ -122,7 +122,7 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
       case Some(positionForDirection) => {
         newGameBoard.collisionObject(player.position, positionForDirection, ignoreLastPosition = false) match {
           case Some(collisionObject) => {
-            val hitResult = playerHit(collisionObject,gameBoard,shootAction)
+            val hitResult = playerOrBlockHit(collisionObject,gameBoard,shootAction)
             newGameBoard = hitResult._1
             events = hitResult._2:::events
             events = events.:+(AttackResult(collisionObject.position.rowIdx, collisionObject.position.columnIdx, hit = true, gameConfigProvider.attackImagePath, gameConfigProvider.attackSoundPath))
@@ -135,7 +135,7 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
     (newGameBoard, events)
   }
 
-  private def playerHit(collisionObject : GameObject, gameBoard: GameBoard, shootAction: Action) : (GameBoard, List[Event]) = {
+  private def playerOrBlockHit(collisionObject : GameObject, gameBoard: GameBoard, shootAction: Action) : (GameBoard, List[Event]) = {
     collisionObject match {
       case playerObjectHit: PlayerObject =>
         val newGameBoard = damageAndRemoveDeadPlayer(playerObjectHit, gameBoard,  shootAction)
