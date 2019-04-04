@@ -1,6 +1,8 @@
-![Build Status](https://travis-ci.org/AbgespaceterTyp/PixelTankWars.svg?branch=master)
-
 # PixelTankWars
+
+## Travis CI ![Build Status](https://travis-ci.org/AbgespaceterTyp/PixelTankWars.svg?branch=master)
+
+## Coveralls [![Coverage Status](https://coveralls.io/repos/github/AbgespaceterTyp/PixelTankWars/badge.svg?branch=master)](https://coveralls.io/github/AbgespaceterTyp/PixelTankWars?branch=master)
 
 ![Alt-Text](https://github.com/AbgespaceterTyp/PixelTankWars/blob/master/app/src/main/resources/images/background_opening.png "Pixel Tank Wars")
 
