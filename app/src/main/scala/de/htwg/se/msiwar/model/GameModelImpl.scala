@@ -10,7 +10,7 @@ import scala.util.control.Breaks
 case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: GameBoard, lastExecutedAction: Option[Action], playerNumber: Int, turnNumber: Int) extends GameModel {
 
   override def init(gameConfigProvider: GameConfigProvider): GameModel = {
-    copy(gameConfigProvider, GameBoard(gameConfigProvider.rowCount, gameConfigProvider.colCount, gameConfigProvider.gameObjects), Option.empty[Action], 1,1)
+    copy(gameConfigProvider, GameBoard(gameConfigProvider.rowCount, gameConfigProvider.colCount, gameConfigProvider.gameObjects), Option.empty[Action], 1, 1)
   }
 
   override def startGame(scenarioId: Int): GameModel = {
@@ -21,7 +21,7 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
 
   override def activePlayerName: String = {
     gameBoard.player(playerNumber) match {
-      case Some(value) => value.name
+      case Some(player) => player.name
       case None => ""
     }
   }
@@ -32,14 +32,14 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
 
   override def actionPointCost(actionId: Int): Int = {
     actions.find(_.id == actionId) match {
-      case Some(value) => value.actionPoints
+      case Some(action) => action.actionPoints
       case None => 0
     }
   }
 
   override def actionDescription(actionId: Int): String = {
     actions.find(_.id == actionId) match {
-      case Some(value) => value.description
+      case Some(action) => action.description
       case None => ""
     }
   }
@@ -50,7 +50,7 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
 
   override def actionIconPath(actionId: Int): Option[String] = {
     actions.find(_.id == actionId) match {
-      case Some(value) => Option(value.imagePath)
+      case Some(action) => Option(action.imagePath)
       case None => Option.empty
     }
   }
@@ -70,7 +70,7 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
             var newGameBoard: GameBoard = gameBoard.copy()
             var events: List[Event] = List[Event]()
             // Update view direction first to ensure correct view direction on action execution
-            val newActivePlayer = activePlayer.copy(viewDirection=direction)
+            val newActivePlayer = activePlayer.copy(viewDirection = direction)
             newGameBoard = newGameBoard.placeGameObject(newActivePlayer)
 
             actionToExecute.actionType match {
@@ -86,14 +86,14 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
               case SHOOT =>
                 val shootResult = executeShoot(newActivePlayer, newGameBoard, actionToExecute, direction)
                 newGameBoard = shootResult._1
-                events = shootResult._2:::events
+                events = shootResult._2 ::: events
               case WAIT => // Do nothing
             }
             newGameBoard = updateActionPoints(newGameBoard, activePlayerNumber, actionToExecute)
 
             val nextTurn = updateTurn(Option(actionToExecute), newGameBoard)
             // Reset player actions points when turn changed
-            if(nextTurn._2 != turnNumber){
+            if (nextTurn._2 != turnNumber) {
               newGameBoard = resetPlayerActionPoints(newGameBoard, newGameBoard.players)
             }
             (copy(gameConfigProvider, newGameBoard, Option(actionToExecute), nextTurn._1, nextTurn._2), events)
@@ -106,7 +106,7 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
   }
 
   private def resetPlayerActionPoints(gameBoard: GameBoard, players: List[PlayerObject]): GameBoard = {
-    if(!players.isEmpty){
+    if (!players.isEmpty) {
       val player = players.head
       val newGameBoard = gameBoard.placeGameObject(player.copy(actionPoints = player.maxActionPoints))
       resetPlayerActionPoints(newGameBoard, players.tail)
@@ -115,7 +115,7 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
     }
   }
 
-  private def updateActionPoints(gameBoard: GameBoard, playerNumber: Int, action: Action) : GameBoard = {
+  private def updateActionPoints(gameBoard: GameBoard, playerNumber: Int, action: Action): GameBoard = {
     gameBoard.player(playerNumber) match {
       case Some(player) => {
         val newActionPoints = player.actionPoints - action.actionPoints
@@ -129,7 +129,7 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
     gameBoard.calculatePositionForDirection(player.position, direction, shootAction.range) match {
       case Some(positionForDirection) => {
         gameBoard.collisionObject(player.position, positionForDirection, ignoreLastPosition = false) match {
-          case Some(collisionObject) => playerOrBlockHit(collisionObject,gameBoard,shootAction)
+          case Some(collisionObject) => playerOrBlockHit(collisionObject, gameBoard, shootAction)
           case None => (gameBoard, nothingHit(gameBoard, player.position, direction, shootAction))
         }
       }
@@ -137,10 +137,10 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
     }
   }
 
-  private def playerOrBlockHit(collisionObject : GameObject, gameBoard: GameBoard, shootAction: Action) : (GameBoard, List[Event]) = {
+  private def playerOrBlockHit(collisionObject: GameObject, gameBoard: GameBoard, shootAction: Action): (GameBoard, List[Event]) = {
     collisionObject match {
       case playerObjectHit: PlayerObject =>
-        val newGameBoard = damageAndRemoveDeadPlayer(playerObjectHit, gameBoard,  shootAction)
+        val newGameBoard = damageAndRemoveDeadPlayer(playerObjectHit, gameBoard, shootAction)
         val events = List(CellChanged(List((playerObjectHit.position.rowIdx, playerObjectHit.position.columnIdx))),
           AttackResult(collisionObject.position.rowIdx, collisionObject.position.columnIdx, hit = true, gameConfigProvider.attackImagePath, gameConfigProvider.attackSoundPath))
         (newGameBoard, events)
@@ -160,7 +160,7 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
     }
   }
 
-  private def damageAndRemoveDeadPlayer(playerObject: PlayerObject, gameBoard: GameBoard, shootAction: Action) : GameBoard = {
+  private def damageAndRemoveDeadPlayer(playerObject: PlayerObject, gameBoard: GameBoard, shootAction: Action): GameBoard = {
     val updatedPlayerObject = playerObject.copy(healthPoints = playerObject.healthPoints - shootAction.damage)
     if (updatedPlayerObject.healthPoints <= 0) {
       gameBoard.removeGameObject(updatedPlayerObject)
@@ -175,13 +175,13 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
         if (player.actionPoints <= 0) {
           currentGameBoard.players.find(_.playerNumber > activePlayerNumber) match {
             case Some(nextPlayer) => {
-                (nextPlayer.playerNumber, turnCounter)
+              (nextPlayer.playerNumber, turnCounter)
             }
             case None => {
               // If every player did his turn, start the next turn with first player alive
-              val nextTurnNumber = turnCounter +  1
+              val nextTurnNumber = turnCounter + 1
               // Set next player to first player found which is alive
-              val nextPlayer =  currentGameBoard.players.reduceLeft((a, b) => if (a.playerNumber < b.playerNumber) a else b)
+              val nextPlayer = currentGameBoard.players.reduceLeft((a, b) => if (a.playerNumber < b.playerNumber) a else b)
               (nextPlayer.playerNumber, nextTurnNumber)
             }
           }
@@ -195,7 +195,7 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
 
   override def lastExecutedActionId: Option[Int] = {
     lastExecutedAction match {
-      case Some(value) => Option(value.id)
+      case Some(action) => Option(action.id)
       case None => Option.empty[Int]
     }
   }
@@ -215,25 +215,27 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
   }
 
   private def checkActionExecution(actionId: Int, direction: Direction): Boolean = {
-    gameBoard.player(playerNumber).get.actions.find(_.id == actionId) match {
-      case Some(value) => {
-        value.actionType match {
-          case MOVE => {
-            val newPositionOpt = gameBoard.calculatePositionForDirection(gameBoard.player(playerNumber).get.position, direction, value.range)
-            newPositionOpt match {
-              case Some(_) => {
-                val newPosition = newPositionOpt.get
-                gameBoard.isInBound(newPosition) && gameBoard.gameObjectAt(newPosition).isEmpty
+    gameBoard.player(playerNumber) match {
+      case Some(player) => player.actions.find(_.id == actionId) match {
+        case Some(action) => {
+          action.actionType match {
+            case MOVE => {
+              val newPositionOpt = gameBoard.calculatePositionForDirection(player.position, direction, action.range)
+              newPositionOpt match {
+                case Some(newPosition) => {
+                  gameBoard.isInBound(newPosition) && gameBoard.gameObjectAt(newPosition).isEmpty
+                }
+                // Any other actions are always allowed
+                case None => false
               }
-              // Any other actions are always allowed
-              case None => false
             }
+            // All other actions are always allowed
+            case _ => true
           }
-          // All other actions are always allowed
-          case _ => true
         }
+        // No player found -> do not allow
+        case None => false
       }
-      // No player found -> do not allow
       case None => false
     }
   }
@@ -258,8 +260,8 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
 
   override def cellContentImagePath(rowIndex: Int, columnIndex: Int): Option[String] = {
     gameBoard.gameObjectAt(rowIndex, columnIndex) match {
-      case Some(value) => {
-        value match {
+      case Some(gameObj) => {
+        gameObj match {
           case playerObj: PlayerObject => Option(imagePathForViewDirection(playerObj.imagePath, playerObj.viewDirection))
           case blockObj: BlockObject => Option(blockObj.imagePath)
         }
@@ -282,8 +284,8 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
 
   override def cellContentToText(rowIndex: Int, columnIndex: Int): String = {
     gameBoard.gameObjectAt(rowIndex, columnIndex) match {
-      case Some(value) => {
-        value match {
+      case Some(gameObj) => {
+        gameObj match {
           case playerObj: PlayerObject => playerObj.playerNumber.toString
           case blockObj: BlockObject => blockObj.name
         }
@@ -292,15 +294,18 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
     }
   }
 
-  override def cellContent(rowIndex: Int, columnIndex: Int) : Option[GameObject] = {
+  override def cellContent(rowIndex: Int, columnIndex: Int): Option[GameObject] = {
     gameBoard.gameObjectAt(rowIndex, columnIndex)
   }
 
   override def cellsInRange(actionId: Option[Int]): List[(Int, Int)] = {
     actionId match {
-      case Some(value) => {
-        gameBoard.player(playerNumber).get.actions.find(_.id == value) match {
-          case Some(value) =>  gameBoard.reachableCells(gameBoard.player(playerNumber).get.position, value)
+      case Some(action) => {
+        gameBoard.player(playerNumber) match {
+          case Some(player) => player.actions.find(_.id == action) match {
+            case Some(actionFound) => gameBoard.reachableCells(player.position, actionFound)
+            case None => List()
+          }
           case None => List()
         }
       }
@@ -317,23 +322,29 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
   }
 
   override def actionDamage(actionId: Int): Int = {
-    gameBoard.player(playerNumber).get.actions.find(_.id == actionId) match {
-      case Some(value) => value.damage
+    gameBoard.player(playerNumber) match {
+      case Some(player) => player.actions.find(_.id == actionId) match {
+        case Some(action) => action.damage
+        case None => 0
+      }
       case None => 0
     }
   }
 
   override def actionRange(actionId: Int): Int = {
-    gameBoard.player(playerNumber).get.actions.find(_.id == actionId) match {
-      case Some(value) => value.range
+    gameBoard.player(playerNumber) match {
+      case Some(player) => player.actions.find(_.id == actionId) match {
+        case Some(action) => action.range
+        case None => 0
+      }
       case None => 0
     }
   }
 
   override def wonImagePath: String = {
     winnerId match {
-      case Some(value) => player(value) match {
-        case Some(value) => value.wonImagePath
+      case Some(playerNr) => player(playerNr) match {
+        case Some(player) => player.wonImagePath
         case None => ""
       }
       case None => ""
@@ -345,7 +356,7 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
   }
 
   override def scenarioName(scenarioId: Int): Option[String] = {
-    if(scenarioId >= 0 && scenarioId < gameConfigProvider.listScenarios.size) {
+    if (scenarioId >= 0 && scenarioId < gameConfigProvider.listScenarios.size) {
       val scenarioName = gameConfigProvider.listScenarios(scenarioId)
       Option(scenarioName.substring(0, scenarioName.lastIndexOf('.')).replace('_', ' '))
     } else {
@@ -355,14 +366,14 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
 
   override def activePlayerActionPoints: Int = {
     gameBoard.player(playerNumber) match {
-      case Some(value) => value.actionPoints
+      case Some(player) => player.actionPoints
       case None => 0
     }
   }
 
   override def activePlayerHealthPoints: Int = {
     gameBoard.player(playerNumber) match {
-      case Some(value) => value.healthPoints
+      case Some(player) => player.healthPoints
       case None => 0
     }
   }
