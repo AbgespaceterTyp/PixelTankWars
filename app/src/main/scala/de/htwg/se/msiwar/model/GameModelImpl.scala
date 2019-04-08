@@ -69,7 +69,10 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
   }
 
   override def executeAction(actionId: Int, rowIndex: Int, columnIndex: Int): (GameModel, List[Event]) = {
-    executeAction(actionId, gameBoard.calculateDirection(gameBoard.player(playerNumber).get.position, Position(rowIndex, columnIndex)))
+    gameBoard.player(playerNumber) match {
+      case Some(player) => executeAction(actionId, gameBoard.calculateDirection(player.position, Position(rowIndex, columnIndex)))
+      case None => (this, List())
+    }
   }
 
   override def executeAction(actionId: Int, direction: Direction): (GameModel, List[Event]) = {
@@ -98,7 +101,7 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
                 events = shootResult._2:::events
               case WAIT => // Do nothing
             }
-            newGameBoard = newGameBoard.placeGameObject(newActivePlayer.copy(actionPoints = newActivePlayer.actionPoints - actionToExecute.actionPoints))
+            newGameBoard = updateActionPoints(newGameBoard, activePlayerNumber, actionToExecute)
 
             val nextTurn = updateTurn(Option(actionToExecute), newGameBoard)
             // Reset player actions points when turn changed
@@ -113,6 +116,16 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
         }
       }
       case None => (this, List[Event]())
+    }
+  }
+
+  private def updateActionPoints(gameBoard: GameBoard, playerNumber: Int, action: Action) : GameBoard = {
+    gameBoard.player(playerNumber) match {
+      case Some(player) => {
+        val newActionPoints = player.actionPoints - action.actionPoints
+        gameBoard.placeGameObject(player.copy(actionPoints = newActionPoints))
+      }
+      case None => gameBoard
     }
   }
 
