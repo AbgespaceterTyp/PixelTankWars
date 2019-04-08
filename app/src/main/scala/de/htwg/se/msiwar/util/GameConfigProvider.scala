@@ -14,7 +14,6 @@ trait GameConfigProvider {
 
   def listScenarios: List[String]
   def loadFromFile(configFilePath: String): GameConfigProvider
-  def generateGame(rowCount: Int, columnCount: Int, completion: (Boolean) => Unit) : GameConfigProvider
 
   def rowCount: Int
   def colCount: Int

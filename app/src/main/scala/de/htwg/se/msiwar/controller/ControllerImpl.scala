@@ -140,11 +140,4 @@ case class ControllerImpl(var model: GameModel) extends Controller {
   override def appIconImagePath: String = {
     model.gameConfigProvider.appIconImagePath
   }
-
-  override def startRandomGame(): Unit = {
-    model = model.startRandomGame()
-
-    publish(GameStarted())
-    publish(TurnStarted(model.activePlayerNumber))
-  }
 }

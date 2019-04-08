@@ -109,14 +109,4 @@ class TestConfigProvider extends GameConfigProvider {
   override def listScenarios: List[String] = {
     List[String](testScenario1,testScenario2)
   }
-
-  override def generateGame(rowCount: Int, columnCount: Int, completion: (Boolean) => Unit): GameConfigProvider = {
-    // For testing reasons. The game generation is tested in an other spec
-    if (rowCount > 0 && columnCount > 0) {
-      completion(true)
-    } else {
-      completion(false)
-    }
-    this
-  }
 }

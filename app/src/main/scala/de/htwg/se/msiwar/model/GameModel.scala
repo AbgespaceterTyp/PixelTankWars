@@ -163,13 +163,6 @@ trait GameModel extends Publisher {
   def startGame(scenarioId: Int) : GameModel
 
   /**
-    * Starts a newly generated game
-    * @param rowCount number of rows. Default value is a number between 2 and 10
-    * @param columnCount number of columns. Default value is a number between 2 and 20
-    */
-  def startRandomGame(rowCount: Int = nextInt(9) + 2 , columnCount: Int = nextInt(19) + 2) : GameModel
-
-  /**
     * @return the row count of the game board
     */
   def rowCount: Int

@@ -10,12 +10,6 @@ class SwingMenuBar(controller: Controller) extends MenuBar {
   contents += new Menu("Game") {
     mnemonic = Key.G
 
-    contents += new MenuItem(Action("Random Level...") {
-      controller.startRandomGame()
-    })
-
-    contents += new Separator()
-
     controller.scenarioIds.foreach(s => {
       val scenarioNameOpt = controller.scenarioName(s)
       if(scenarioNameOpt.isDefined) {

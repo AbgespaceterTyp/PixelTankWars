@@ -176,10 +176,4 @@ trait Controller extends Publisher{
     * @param scenarioId the scenario id to configure game from
     */
   def startGame(scenarioId: Int) : Unit
-
-  /**
-    * Starts a newly generated game
-    */
-  def startRandomGame(): Unit
-
   }

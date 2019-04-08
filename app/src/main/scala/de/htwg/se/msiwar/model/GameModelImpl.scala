@@ -19,19 +19,6 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
     init(configProvider)
   }
 
-  override def startRandomGame(rowCount: Int, columnCount: Int): GameModel = {
-    var newModel: GameModel = this
-    // TODO use option/either
-    gameConfigProvider.generateGame(rowCount, columnCount, couldGenerateGame => {
-      if (couldGenerateGame) {
-        newModel = init(gameConfigProvider)
-      } else {
-        publish(ModelCouldNotGenerateGame())
-      }
-    })
-    newModel
-  }
-
   override def activePlayerName: String = {
     gameBoard.player(playerNumber) match {
       case Some(value) => value.name
