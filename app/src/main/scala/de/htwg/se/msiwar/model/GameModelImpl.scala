@@ -170,20 +170,26 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
   }
 
   private def updateTurn(lastAction: Option[Action], currentGameBoard: GameBoard): (Int, Int) = {
-    val currentPlayerOpt = currentGameBoard.player(playerNumber)
-    if (currentPlayerOpt.isDefined && currentPlayerOpt.get.actionPoints <= 0) {
-      val nextPlayerOpt = currentGameBoard.players.find(_.playerNumber > activePlayerNumber)
-      // If every player did his turn, start the next turn with first player alive
-      if (!nextPlayerOpt.isDefined) {
-        val nextTurnNumber = turnCounter +  1
-        // Set next player to first player found which is alive
-        val nextPlayer =  currentGameBoard.players.reduceLeft((a, b) => if (a.playerNumber < b.playerNumber) a else b)
-        (nextPlayer.playerNumber, nextTurnNumber)
-      } else {
-        (nextPlayerOpt.get.playerNumber, turnCounter)
+    currentGameBoard.player(playerNumber) match {
+      case Some(player) => {
+        if (player.actionPoints <= 0) {
+          currentGameBoard.players.find(_.playerNumber > activePlayerNumber) match {
+            case Some(nextPlayer) => {
+                (nextPlayer.playerNumber, turnCounter)
+            }
+            case None => {
+              // If every player did his turn, start the next turn with first player alive
+              val nextTurnNumber = turnCounter +  1
+              // Set next player to first player found which is alive
+              val nextPlayer =  currentGameBoard.players.reduceLeft((a, b) => if (a.playerNumber < b.playerNumber) a else b)
+              (nextPlayer.playerNumber, nextTurnNumber)
+            }
+          }
+        } else {
+          (playerNumber, turnNumber)
+        }
       }
-    } else {
-      (playerNumber, turnNumber)
+      case None => (playerNumber, turnNumber)
     }
   }
 
@@ -195,7 +201,10 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
   }
 
   override def canExecuteAction(actionId: Int, rowIndex: Int, columnIndex: Int): Boolean = {
-    canExecuteAction(actionId, gameBoard.calculateDirection(gameBoard.player(playerNumber).get.position, Position(rowIndex, columnIndex)))
+    gameBoard.player(playerNumber) match {
+      case Some(player) => canExecuteAction(actionId, gameBoard.calculateDirection(player.position, Position(rowIndex, columnIndex)))
+      case None => false
+    }
   }
 
   override def canExecuteAction(actionId: Int, direction: Direction): Boolean = {
@@ -323,8 +332,10 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
 
   override def wonImagePath: String = {
     winnerId match {
-        // TODO replace get with match
-      case Some(value) => player(value).get.wonImagePath
+      case Some(value) => player(value) match {
+        case Some(value) => value.wonImagePath
+        case None => ""
+      }
       case None => ""
     }
   }
