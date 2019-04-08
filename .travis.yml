@@ -8,4 +8,4 @@ script:
   - sbt clean coverage test coverageReport
 
 after_success:
-  - sbt coveralls
+  - sbt coverageReport coveralls
