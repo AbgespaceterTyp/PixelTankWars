@@ -88,12 +88,13 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
 
             actionToExecute.actionType match {
               case MOVE =>
-                val newPositionOpt = newGameBoard.calculatePositionForDirection(activePlayer.position, direction, actionToExecute.range)
-                if (newPositionOpt.isDefined) {
-                  val newPosition = newPositionOpt.get
-                  val oldPosition = newActivePlayer.position
-                  newGameBoard = newGameBoard.moveGameObject(newActivePlayer, newPosition)
-                  events = events.:+(CellChanged(List((newPosition.rowIdx, newPosition.columnIdx), (oldPosition.rowIdx, oldPosition.columnIdx))))
+                newGameBoard.calculatePositionForDirection(activePlayer.position, direction, actionToExecute.range) match {
+                  case Some(newPosition) => {
+                    val oldPosition = newActivePlayer.position
+                    newGameBoard = newGameBoard.moveGameObject(newActivePlayer, newPosition)
+                    events = events.:+(CellChanged(List((newPosition.rowIdx, newPosition.columnIdx), (oldPosition.rowIdx, oldPosition.columnIdx))))
+                  }
+                  case None => // Do nothing - player cannot move to target position
                 }
               case SHOOT =>
                 val shootResult = executeShoot(newActivePlayer, newGameBoard, actionToExecute, direction)
