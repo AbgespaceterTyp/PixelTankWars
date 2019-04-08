@@ -94,7 +94,7 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
             val nextTurn = updateTurn(Option(actionToExecute), newGameBoard)
             // Reset player actions points when turn changed
             if(nextTurn._2 != turnNumber){
-              newGameBoard.players.foreach(p => newGameBoard = newGameBoard.placeGameObject(p.copy(actionPoints = p.maxActionPoints)))
+              newGameBoard = resetPlayerActionPoints(newGameBoard, newGameBoard.players)
             }
             (copy(gameConfigProvider, newGameBoard, Option(actionToExecute), nextTurn._1, nextTurn._2), events)
           }
@@ -102,6 +102,16 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
         }
       }
       case None => (this, List[Event]())
+    }
+  }
+
+  private def resetPlayerActionPoints(gameBoard: GameBoard, players: List[PlayerObject]): GameBoard = {
+    if(!players.isEmpty){
+      val player = players.head
+      val newGameBoard = gameBoard.placeGameObject(player.copy(actionPoints = player.maxActionPoints))
+      resetPlayerActionPoints(newGameBoard, players.tail)
+    } else {
+      gameBoard
     }
   }
 
