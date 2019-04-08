@@ -73,44 +73,46 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
   }
 
   override def executeAction(actionId: Int, direction: Direction): (GameModel, List[Event]) = {
-    var newGameBoard: GameBoard = gameBoard.copy()
-    var events: List[Event] = List[Event]()
-    var newActivePlayer: PlayerObject = gameBoard.player(playerNumber).get.copy()
+    gameBoard.player(playerNumber) match {
+      case Some(activePlayer) => {
+        activePlayer.actions.find(_.id == actionId) match {
+          case Some(actionToExecute) => {
+            var newGameBoard: GameBoard = gameBoard.copy()
+            var events: List[Event] = List[Event]()
+            // Update view direction first to ensure correct view direction on action execution
+            val newActivePlayer = activePlayer.copy(viewDirection=direction)
+            newGameBoard = newGameBoard.placeGameObject(newActivePlayer)
 
-    val actionForId = newActivePlayer.actions.find(_.id == actionId)
-    if (actionForId.isDefined) {
-      // Update view direction first to ensure correct view direction on action execution
-      newActivePlayer = newActivePlayer.copy(viewDirection=direction)
+            actionToExecute.actionType match {
+              case MOVE =>
+                val newPositionOpt = newGameBoard.calculatePositionForDirection(activePlayer.position, direction, actionToExecute.range)
+                if (newPositionOpt.isDefined) {
+                  val newPosition = newPositionOpt.get
+                  val oldPosition = newActivePlayer.position
+                  newGameBoard = newGameBoard.moveGameObject(newActivePlayer, newPosition)
+                  events = events.:+(CellChanged(List((newPosition.rowIdx, newPosition.columnIdx), (oldPosition.rowIdx, oldPosition.columnIdx))))
+                }
+              case SHOOT =>
+                val shootResult = executeShoot(newActivePlayer, newGameBoard, actionToExecute, direction)
+                newGameBoard = shootResult._1
+                events = shootResult._2:::events
+              case WAIT => // Do nothing
+            }
+            newGameBoard = newGameBoard.placeGameObject(newActivePlayer.copy(actionPoints = newActivePlayer.actionPoints - actionToExecute.actionPoints))
 
-      val actionToExecute = actionForId.get
-      actionToExecute.actionType match {
-        case MOVE =>
-          val newPositionOpt = newGameBoard.calculatePositionForDirection(newActivePlayer.position, direction, actionToExecute.range)
-          if (newPositionOpt.isDefined) {
-            val newPosition = newPositionOpt.get
-            val oldPosition = newActivePlayer.position
-            newGameBoard = newGameBoard.moveGameObject(newActivePlayer, newPosition)
-            newActivePlayer = newActivePlayer.copy(position = newPosition)
-            events = events.:+(CellChanged(List((newPosition.rowIdx, newPosition.columnIdx), (oldPosition.rowIdx, oldPosition.columnIdx))))
+            val nextTurn = updateTurn(Option(actionToExecute), newGameBoard)
+            // Reset player actions points when turn changed
+            if(nextTurn._2 != turnNumber){
+              for (playerObject <- newGameBoard.players) {
+                newGameBoard = newGameBoard.placeGameObject(playerObject.copy(actionPoints = playerObject.maxActionPoints))
+              }
+            }
+            (copy(gameConfigProvider, newGameBoard, Option(actionToExecute), nextTurn._1, nextTurn._2), events)
           }
-        case SHOOT =>
-          val shootResult = executeShoot(newActivePlayer, newGameBoard, actionToExecute, direction)
-          newGameBoard = shootResult._1
-          events = shootResult._2:::events
-        case WAIT => // Do nothing
-      }
-      newGameBoard = newGameBoard.placeGameObject(newActivePlayer.copy(actionPoints = newActivePlayer.actionPoints - actionToExecute.actionPoints))
-
-      val nextTurn = updateTurn(Option(actionToExecute), newGameBoard)
-      // Reset player actions points when turn changed
-      if(nextTurn._2 != turnNumber){
-        for (playerObject <- newGameBoard.players) {
-          newGameBoard = newGameBoard.placeGameObject(playerObject.copy(actionPoints = playerObject.maxActionPoints))
+          case None => (this, List[Event]())
         }
       }
-      (copy(gameConfigProvider, newGameBoard, Option(actionToExecute), nextTurn._1, nextTurn._2), events)
-    } else {
-      (this, List[Event]())
+      case None => (this, List[Event]())
     }
   }
 
