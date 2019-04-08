@@ -130,32 +130,29 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
   }
 
   private def executeShoot(player: PlayerObject, gameBoard: GameBoard, shootAction: Action, direction: Direction): (GameBoard, List[Event]) = {
-    var newGameBoard: GameBoard = gameBoard
-    var events: List[Event] = List[Event]()
-
-    newGameBoard.calculatePositionForDirection(player.position, direction, shootAction.range) match {
+    gameBoard.calculatePositionForDirection(player.position, direction, shootAction.range) match {
       case Some(positionForDirection) => {
-        newGameBoard.collisionObject(player.position, positionForDirection, ignoreLastPosition = false) match {
-          case Some(collisionObject) => {
-            val hitResult = playerOrBlockHit(collisionObject,gameBoard,shootAction)
-            newGameBoard = hitResult._1
-            events = hitResult._2:::events
-            events = events.:+(AttackResult(collisionObject.position.rowIdx, collisionObject.position.columnIdx, hit = true, gameConfigProvider.attackImagePath, gameConfigProvider.attackSoundPath))
-          }
-          case None => events = nothingHit(newGameBoard, player.position, direction, shootAction):::events
+        gameBoard.collisionObject(player.position, positionForDirection, ignoreLastPosition = false) match {
+          case Some(collisionObject) => playerOrBlockHit(collisionObject,gameBoard,shootAction)
+          case None => (gameBoard, nothingHit(gameBoard, player.position, direction, shootAction))
         }
       }
-      case None =>
+      case None => (gameBoard, List())
     }
-    (newGameBoard, events)
   }
 
   private def playerOrBlockHit(collisionObject : GameObject, gameBoard: GameBoard, shootAction: Action) : (GameBoard, List[Event]) = {
     collisionObject match {
       case playerObjectHit: PlayerObject =>
         val newGameBoard = damageAndRemoveDeadPlayer(playerObjectHit, gameBoard,  shootAction)
-        (newGameBoard, List(CellChanged(List((playerObjectHit.position.rowIdx, playerObjectHit.position.columnIdx), (playerObjectHit.position.rowIdx, playerObjectHit.position.columnIdx)))))
-      case blockObject: BlockObject => (gameBoard, List(CellChanged(List((blockObject.position.rowIdx, blockObject.position.columnIdx)))))
+        val events = List(CellChanged(List((playerObjectHit.position.rowIdx, playerObjectHit.position.columnIdx))),
+          AttackResult(collisionObject.position.rowIdx, collisionObject.position.columnIdx, hit = true, gameConfigProvider.attackImagePath, gameConfigProvider.attackSoundPath))
+        (newGameBoard, events)
+      case blockObject: BlockObject => {
+        val events = List(CellChanged(List((blockObject.position.rowIdx, blockObject.position.columnIdx))),
+          AttackResult(collisionObject.position.rowIdx, collisionObject.position.columnIdx, hit = true, gameConfigProvider.attackImagePath, gameConfigProvider.attackSoundPath))
+        (gameBoard, events)
+      }
     }
   }
 
