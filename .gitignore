@@ -5,8 +5,8 @@
 bin/
 .settings/
 .classpath
-
 # Intellij
+/.idea
 .idea/
 target/
 main.iml
