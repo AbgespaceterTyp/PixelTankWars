@@ -6,6 +6,8 @@ bin/
 .settings/
 .classpath
 # Intellij
+/.target
+/.project
 /.idea
 .idea/
 target/
