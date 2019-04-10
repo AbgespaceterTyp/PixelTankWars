@@ -333,9 +333,7 @@ class ControllerSpec extends FlatSpec with Matchers {
     TestEventHandler(model, controller, Option(gameStartedPromise), Option.empty, Option(turnStartedPromise))
     controller.startGame(0)
 
-    val gameStarted = Await.result(gameStartedPromise.future, 5000 millis)
-    val playerNumber = Await.result(turnStartedPromise.future, 5000 millis)
-    gameStarted should be(true)
-    playerNumber should be(1)
+    Await.result(gameStartedPromise.future, 500 millis) should be(true)
+    Await.result(turnStartedPromise.future, 500 millis) should be(1)
   }
 }
