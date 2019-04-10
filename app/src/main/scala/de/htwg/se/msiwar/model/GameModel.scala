@@ -94,7 +94,7 @@ trait GameModel extends Publisher {
     * @param actionId  the id of the action to execute
     * @param direction the direction of the action to execute
     */
-  def executeAction(actionId: Int, direction: Direction): (GameModel, List[Event])
+  def executeAction(actionId: Int, direction: Direction): Future[(GameModel, List[Event])]
 
   /**
     * Executes the given action id in the given direction
@@ -104,7 +104,7 @@ trait GameModel extends Publisher {
     * @param rowIndex    the target row
     * @param columnIndex the target column
     */
-  def executeAction(actionId: Int, rowIndex: Int, columnIndex: Int): (GameModel, List[Event])
+  def executeAction(actionId: Int, rowIndex: Int, columnIndex: Int): Future[(GameModel, List[Event])]
 
   /**
     * Verifies if the action for given id in given direction can be executed or will result in an error
@@ -113,7 +113,7 @@ trait GameModel extends Publisher {
     * @param direction the direction of the action to check
     * @return true when the action can be executed otherwise false
     */
-  def canExecuteAction(actionId: Int, direction: Direction): Boolean
+  def canExecuteAction(actionId: Int, direction: Direction): Future[Boolean]
 
   /**
     * Verifies if the action for given id in given direction can be executed or will result in an error
@@ -123,7 +123,7 @@ trait GameModel extends Publisher {
     * @param columnIndex the target column of the action to check
     * @return true when the action can be executed otherwise false
     */
-  def canExecuteAction(actionId: Int, rowIndex: Int, columnIndex: Int): Boolean
+  def canExecuteAction(actionId: Int, rowIndex: Int, columnIndex: Int): Future[Boolean]
 
   /**
     * @return the id of the last executed action if present

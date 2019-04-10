@@ -3,6 +3,7 @@ package de.htwg.se.msiwar.controller
 import de.htwg.se.msiwar.model.GameObject
 import de.htwg.se.msiwar.util.Direction.Direction
 
+import scala.concurrent.Future
 import scala.swing.Publisher
 
 trait Controller extends Publisher {
@@ -62,7 +63,7 @@ trait Controller extends Publisher {
     * @param direction the direction of the action to check
     * @return true when the action can be executed otherwise false
     */
-  def canExecuteAction(actionId: Int, direction: Direction): Boolean
+  def canExecuteAction(actionId: Int, direction: Direction): Future[Boolean]
 
   /**
     * Verifies if the action for given id in given direction can be executed or will result in an error
@@ -72,7 +73,7 @@ trait Controller extends Publisher {
     * @param columnIndex the target column of the action to check
     * @return true when the action can be executed otherwise false
     */
-  def canExecuteAction(actionId: Int, rowIndex: Int, columnIndex: Int): Boolean
+  def canExecuteAction(actionId: Int, rowIndex: Int, columnIndex: Int): Future[Boolean]
 
   /**
     * @param playerNumber the number of the player to get action ids for

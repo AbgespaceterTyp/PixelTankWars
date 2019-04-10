@@ -4,6 +4,7 @@ import de.htwg.se.msiwar.model._
 import de.htwg.se.msiwar.util.Direction.Direction
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.swing.event.Event
 import scala.util.{Failure, Success}
 
@@ -22,11 +23,17 @@ case class ControllerImpl(var model: GameModel) extends Controller {
   }
 
   override def executeAction(actionId: Int, direction: Direction): Unit = {
-    checkAfterActionExecution(model.executeAction(actionId, direction))
+    model.executeAction(actionId, direction).onComplete {
+      case Success(action) => checkAfterActionExecution(action)
+      case Failure(exception) => publish(Error(exception.getMessage))
+    }
   }
 
   override def executeAction(actionId: Int, rowIndex: Int, columnIndex: Int): Unit = {
-    checkAfterActionExecution(model.executeAction(actionId, rowIndex, columnIndex))
+    model.executeAction(actionId, rowIndex, columnIndex).onComplete {
+      case Success(action) => checkAfterActionExecution(action)
+      case Failure(exception) => publish(Error(exception.getMessage))
+    }
   }
 
   private def checkAfterActionExecution(actionResult: (GameModel, List[Event])) = {
@@ -47,11 +54,11 @@ case class ControllerImpl(var model: GameModel) extends Controller {
     cells
   }
 
-  override def canExecuteAction(actionId: Int, direction: Direction): Boolean = {
+  override def canExecuteAction(actionId: Int, direction: Direction): Future[Boolean] = {
     model.canExecuteAction(actionId, direction)
   }
 
-  override def canExecuteAction(actionId: Int, rowIndex: Int, columnIndex: Int): Boolean = {
+  override def canExecuteAction(actionId: Int, rowIndex: Int, columnIndex: Int): Future[Boolean] = {
     model.canExecuteAction(actionId, rowIndex, columnIndex)
   }
 

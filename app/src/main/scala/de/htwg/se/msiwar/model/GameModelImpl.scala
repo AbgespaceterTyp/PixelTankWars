@@ -57,54 +57,56 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
       case None => Option.empty
     }
   }
-  //TODO Future
-  override def executeAction(actionId: Int, rowIndex: Int, columnIndex: Int): (GameModel, List[Event]) = {
+
+  override def executeAction(actionId: Int, rowIndex: Int, columnIndex: Int): Future[(GameModel, List[Event])] = {
     gameBoard.player(playerNumber) match {
       case Some(player) => executeAction(actionId, gameBoard.calculateDirection(player.position, Position(rowIndex, columnIndex)))
-      case None => (this, List())
+      case None => Future((this, List()))
     }
   }
-  //TODO Future
-  override def executeAction(actionId: Int, direction: Direction): (GameModel, List[Event]) = {
-    gameBoard.player(playerNumber) match {
-      case Some(activePlayer) => {
-        activePlayer.actions.find(_.id == actionId) match {
-          case Some(actionToExecute) => {
-            var newGameBoard: GameBoard = gameBoard.copy()
-            var events: List[Event] = List[Event]()
-            // Update view direction first to ensure correct view direction on action execution
-            val newActivePlayer = activePlayer.copy(viewDirection = direction)
-            newGameBoard = newGameBoard.placeGameObject(newActivePlayer)
 
-            actionToExecute.actionType match {
-              case MOVE =>
-                newGameBoard.calculatePositionForDirection(activePlayer.position, direction, actionToExecute.range) match {
-                  case Some(newPosition) => {
-                    val oldPosition = newActivePlayer.position
-                    newGameBoard = newGameBoard.moveGameObject(newActivePlayer, newPosition)
-                    events = events.:+(CellChanged(List((newPosition.rowIdx, newPosition.columnIdx), (oldPosition.rowIdx, oldPosition.columnIdx))))
+  override def executeAction(actionId: Int, direction: Direction): Future[(GameModel, List[Event])] = {
+    Future {
+      gameBoard.player(playerNumber) match {
+        case Some(activePlayer) => {
+          activePlayer.actions.find(_.id == actionId) match {
+            case Some(actionToExecute) => {
+              var newGameBoard: GameBoard = gameBoard.copy()
+              var events: List[Event] = List[Event]()
+              // Update view direction first to ensure correct view direction on action execution
+              val newActivePlayer = activePlayer.copy(viewDirection = direction)
+              newGameBoard = newGameBoard.placeGameObject(newActivePlayer)
+
+              actionToExecute.actionType match {
+                case MOVE =>
+                  newGameBoard.calculatePositionForDirection(activePlayer.position, direction, actionToExecute.range) match {
+                    case Some(newPosition) => {
+                      val oldPosition = newActivePlayer.position
+                      newGameBoard = newGameBoard.moveGameObject(newActivePlayer, newPosition)
+                      events = events.:+(CellChanged(List((newPosition.rowIdx, newPosition.columnIdx), (oldPosition.rowIdx, oldPosition.columnIdx))))
+                    }
+                    case None => // Do nothing - player cannot move to target position
                   }
-                  case None => // Do nothing - player cannot move to target position
-                }
-              case SHOOT =>
-                val shootResult = executeShoot(newActivePlayer, newGameBoard, actionToExecute, direction)
-                newGameBoard = shootResult._1
-                events = shootResult._2 ::: events
-              case WAIT => // Do nothing
-            }
-            newGameBoard = updateActionPoints(newGameBoard, activePlayerNumber, actionToExecute)
+                case SHOOT =>
+                  val shootResult = executeShoot(newActivePlayer, newGameBoard, actionToExecute, direction)
+                  newGameBoard = shootResult._1
+                  events = shootResult._2 ::: events
+                case WAIT => // Do nothing
+              }
+              newGameBoard = updateActionPoints(newGameBoard, activePlayerNumber, actionToExecute)
 
-            val nextTurn = updateTurn(Option(actionToExecute), newGameBoard)
-            // Reset player actions points when turn changed
-            if (nextTurn._2 != turnNumber) {
-              newGameBoard = resetPlayerActionPoints(newGameBoard, newGameBoard.players)
+              val nextTurn = updateTurn(Option(actionToExecute), newGameBoard)
+              // Reset player actions points when turn changed
+              if (nextTurn._2 != turnNumber) {
+                newGameBoard = resetPlayerActionPoints(newGameBoard, newGameBoard.players)
+              }
+              (copy(gameConfigProvider, newGameBoard, Option(actionToExecute), nextTurn._1, nextTurn._2), events)
             }
-            (copy(gameConfigProvider, newGameBoard, Option(actionToExecute), nextTurn._1, nextTurn._2), events)
+            case None => (this, List[Event]())
           }
-          case None => (this, List[Event]())
         }
+        case None => (this, List[Event]())
       }
-      case None => (this, List[Event]())
     }
   }
 
@@ -202,18 +204,22 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
       case None => Option.empty[Int]
     }
   }
+
   //TODO Future
-  override def canExecuteAction(actionId: Int, rowIndex: Int, columnIndex: Int): Boolean = {
+  override def canExecuteAction(actionId: Int, rowIndex: Int, columnIndex: Int): Future[Boolean] = {
     gameBoard.player(playerNumber) match {
       case Some(player) => canExecuteAction(actionId, gameBoard.calculateDirection(player.position, Position(rowIndex, columnIndex)))
-      case None => false
+      case None => Future(false)
     }
   }
+
   //TODO Future
-  override def canExecuteAction(actionId: Int, direction: Direction): Boolean = {
-    winnerId match {
-      case Some(_) => false
-      case None => checkActionExecution(actionId, direction)
+  override def canExecuteAction(actionId: Int, direction: Direction): Future[Boolean] = {
+    Future {
+      winnerId match {
+        case Some(_) => false
+        case None => checkActionExecution(actionId, direction)
+      }
     }
   }
 
@@ -300,6 +306,7 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
   override def cellContent(rowIndex: Int, columnIndex: Int): Option[GameObject] = {
     gameBoard.gameObjectAt(rowIndex, columnIndex)
   }
+
   //TODO Future
   override def cellsInRange(actionId: Option[Int]): List[(Int, Int)] = {
     actionId match {
