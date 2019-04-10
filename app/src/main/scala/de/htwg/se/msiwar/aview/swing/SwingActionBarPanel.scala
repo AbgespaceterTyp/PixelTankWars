@@ -31,7 +31,7 @@ class SwingActionBarPanel(controller: Controller) extends FlowPanel {
         private val imagePath = controller.actionIconPath(actionId)
         if (imagePath.isDefined) {
           val imagePathOpt = ImageUtils.loadImageIcon(imagePath.get)
-          if(imagePathOpt.isDefined){
+          if (imagePathOpt.isDefined) {
             icon = imagePathOpt.get
           } else {
             icon = null

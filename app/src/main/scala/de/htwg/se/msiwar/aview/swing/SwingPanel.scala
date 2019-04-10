@@ -62,7 +62,7 @@ class SwingPanel(controller: Controller) extends BorderPanel with Reactor {
   }
 
   def resize(width: Int, height: Int): Unit = {
-    if(backgroundImage.isDefined) {
+    if (backgroundImage.isDefined) {
       backgroundImage = ImageUtils.scale(backgroundImage.get, width, height)
     }
     actionPanel.resize(width, height)

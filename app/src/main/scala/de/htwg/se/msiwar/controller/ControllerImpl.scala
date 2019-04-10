@@ -3,7 +3,9 @@ package de.htwg.se.msiwar.controller
 import de.htwg.se.msiwar.model._
 import de.htwg.se.msiwar.util.Direction.Direction
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.swing.event.Event
+import scala.util.{Failure, Success}
 
 case class ControllerImpl(var model: GameModel) extends Controller {
   listenTo(model)
@@ -16,7 +18,7 @@ case class ControllerImpl(var model: GameModel) extends Controller {
     model.cellContentToText(rowIndex, columnIndex)
   }
 
-  override def cellContent(rowIndex: Int, columnIndex: Int) : Option[GameObject] = {
+  override def cellContent(rowIndex: Int, columnIndex: Int): Option[GameObject] = {
     model.cellContent(rowIndex, columnIndex)
   }
 
@@ -107,10 +109,14 @@ case class ControllerImpl(var model: GameModel) extends Controller {
   }
 
   override def startGame(scenarioId: Int): Unit = {
-    model = model.startGame(scenarioId)
-
-    publish(GameStarted())
-    publish(TurnStarted(model.activePlayerNumber))
+    model.startGame(scenarioId).onComplete {
+      case Success(value) => {
+        model = value
+        publish(GameStarted())
+        publish(TurnStarted(model.activePlayerNumber))
+      }
+      case Failure(_) => //TODO Handle Failure
+    }
   }
 
   override def turnCounter: Int = {

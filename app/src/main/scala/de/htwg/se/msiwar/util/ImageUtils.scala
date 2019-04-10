@@ -3,6 +3,7 @@ package de.htwg.se.msiwar.util
 import java.awt.RenderingHints
 import java.awt.image.BufferedImage
 import java.io.InputStream
+
 import javax.imageio.ImageIO
 import javax.swing.ImageIcon
 
@@ -32,9 +33,9 @@ object ImageUtils {
   }
 
   def loadImageIcon(imagePath: String): Option[ImageIcon] = {
-   var imageIcon = Option.empty[ImageIcon]
-   val imageOpt = loadImage(imagePath)
-    if(imageOpt.isDefined){
+    var imageIcon = Option.empty[ImageIcon]
+    val imageOpt = loadImage(imagePath)
+    if (imageOpt.isDefined) {
       imageIcon = Option(new ImageIcon(imageOpt.get))
     }
     imageIcon

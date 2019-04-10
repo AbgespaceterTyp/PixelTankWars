@@ -9,8 +9,8 @@ import scala.util.{Failure, Success, Try}
 case class JSONException(private val message: String = "JSON parsing failed") extends Exception(message)
 
 case class GameConfigProviderImpl(gameObjects: List[GameObject], attackSoundPath: String, openingBackgroundImagePath: String,
-                             levelBackgroundImagePath: String, actionbarBackgroundImagePath: String, attackImagePath: String,
-                             appIconImagePath: String, rowCount: Int, colCount : Int) extends GameConfigProvider {
+                                  levelBackgroundImagePath: String, actionbarBackgroundImagePath: String, attackImagePath: String,
+                                  appIconImagePath: String, rowCount: Int, colCount: Int) extends GameConfigProvider {
 
   def listScenarios: List[String] = {
     FileLoader.loadFilesFromDirPath("/scenarios").sorted

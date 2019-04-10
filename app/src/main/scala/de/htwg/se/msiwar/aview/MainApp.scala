@@ -7,7 +7,7 @@ import de.htwg.se.msiwar.model._
 import de.htwg.se.msiwar.util.{GameConfigProvider, GameConfigProviderImpl}
 
 object MainApp {
-  var gameConfigProvider: GameConfigProvider = GameConfigProviderImpl(List[GameObject](),"","","", "", "", "", 1, 1)
+  var gameConfigProvider: GameConfigProvider = GameConfigProviderImpl(List[GameObject](), "", "", "", "", "", "", 1, 1)
   val scenarioName: String = gameConfigProvider.listScenarios.head
   gameConfigProvider = gameConfigProvider.loadFromFile(scenarioName)
 

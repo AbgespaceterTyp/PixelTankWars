@@ -3,7 +3,7 @@ package de.htwg.se.msiwar.aview.swing
 import de.htwg.se.msiwar.controller.Controller
 
 import scala.swing.event.Key
-import scala.swing.{Action, Menu, MenuBar, MenuItem, Separator}
+import scala.swing.{Action, Menu, MenuBar, MenuItem}
 
 class SwingMenuBar(controller: Controller) extends MenuBar {
 
@@ -12,11 +12,12 @@ class SwingMenuBar(controller: Controller) extends MenuBar {
 
     controller.scenarioIds.foreach(s => {
       val scenarioNameOpt = controller.scenarioName(s)
-      if(scenarioNameOpt.isDefined) {
+      if (scenarioNameOpt.isDefined) {
         contents += new MenuItem(Action(scenarioNameOpt.get) {
           controller.startGame(s)
         })
-      }}
+      }
+    }
     )
   }
 

@@ -4,6 +4,8 @@ import de.htwg.se.msiwar.model.ActionType._
 import de.htwg.se.msiwar.util.Direction.Direction
 import de.htwg.se.msiwar.util.{Direction, GameConfigProvider}
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.swing.event.Event
 
 case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: GameBoard, lastExecutedAction: Option[Action], playerNumber: Int, turnNumber: Int) extends GameModel {
@@ -12,10 +14,12 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
     copy(gameConfigProvider, GameBoard(gameConfigProvider.rowCount, gameConfigProvider.colCount, gameConfigProvider.gameObjects), Option.empty[Action], 1, 1)
   }
 
-  override def startGame(scenarioId: Int): GameModel = {
-    val scenarioName = gameConfigProvider.listScenarios(scenarioId)
-    val configProvider = gameConfigProvider.loadFromFile(scenarioName)
-    init(configProvider)
+  override def startGame(scenarioId: Int): Future[GameModel] = {
+    Future {
+      val scenarioName = gameConfigProvider.listScenarios(scenarioId)
+      val configProvider = gameConfigProvider.loadFromFile(scenarioName)
+      init(configProvider)
+    }
   }
 
   override def activePlayerName: String = {

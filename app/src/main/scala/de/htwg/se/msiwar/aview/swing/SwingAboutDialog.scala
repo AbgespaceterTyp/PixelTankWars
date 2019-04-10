@@ -6,9 +6,9 @@ import de.htwg.se.msiwar.util.ImageUtils
 
 import scala.swing.{BorderPanel, Dialog, Graphics2D}
 
-class SwingAboutDialog extends Dialog{
+class SwingAboutDialog extends Dialog {
   private val backgroundImage = ImageUtils.loadImage("images/about.png")
-  private val contentPanel = new BorderPanel{
+  private val contentPanel = new BorderPanel {
     override protected def paintComponent(g: Graphics2D): Unit = {
       super.paintComponent(g)
       if (backgroundImage.isDefined) {

@@ -14,7 +14,7 @@ case class GameBoard(rows: Int, columns: Int, private val gameObjects: List[Game
 
   def placeGameObject(gameObject: GameObject): GameBoard = {
     board(gameObject.position.rowIdx)(gameObject.position.columnIdx) = gameObject
-    copy(gameObjects = board.flatten.collect({ case s: PlayerObject => s case o: BlockObject => o}).toList)
+    copy(gameObjects = board.flatten.collect({ case s: PlayerObject => s case o: BlockObject => o }).toList)
   }
 
   def gameObjectAt(position: Position): Option[GameObject] = {
@@ -37,12 +37,12 @@ case class GameBoard(rows: Int, columns: Int, private val gameObjects: List[Game
       case p: PlayerObject => board(newPosition.rowIdx)(newPosition.columnIdx) = p.copy(position = newPosition)
       case b: BlockObject => board(newPosition.rowIdx)(newPosition.columnIdx) = b.copy(position = newPosition)
     }
-    copy(gameObjects = board.flatten.collect({ case s: PlayerObject => s case o: BlockObject => o}).toList)
+    copy(gameObjects = board.flatten.collect({ case s: PlayerObject => s case o: BlockObject => o }).toList)
   }
 
   def removeGameObject(gameObject: GameObject): GameBoard = {
     board(gameObject.position.rowIdx)(gameObject.position.columnIdx) = null
-    copy(gameObjects = board.flatten.collect({ case s: PlayerObject => s case o: BlockObject => o}).toList)
+    copy(gameObjects = board.flatten.collect({ case s: PlayerObject => s case o: BlockObject => o }).toList)
   }
 
   def collisionObject(from: Position, to: Position, ignoreLastPosition: Boolean): Option[GameObject] = {

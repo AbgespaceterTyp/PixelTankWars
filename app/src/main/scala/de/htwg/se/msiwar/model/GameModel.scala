@@ -3,9 +3,9 @@ package de.htwg.se.msiwar.model
 import de.htwg.se.msiwar.util.Direction.Direction
 import de.htwg.se.msiwar.util.GameConfigProvider
 
+import scala.concurrent.Future
 import scala.swing.Publisher
 import scala.swing.event.Event
-import scala.util.Random._
 
 case class ModelCouldNotGenerateGame() extends Event
 
@@ -21,7 +21,7 @@ trait GameModel extends Publisher {
     * @param actionId the action id to get action point cost for
     * @return the action point cost for given action id
     */
-  def actionPointCost(actionId: Int) : Int
+  def actionPointCost(actionId: Int): Int
 
   /**
     * @param actionId the action id to get description for
@@ -39,30 +39,30 @@ trait GameModel extends Publisher {
     * @param actionId the action id to get damage value for
     * @return the damage value for given action id
     */
-  def actionDamage(actionId: Int) : Int
+  def actionDamage(actionId: Int): Int
 
   /**
     * @param actionId the action id to get range value for
     * @return the range value for the given action id
     */
-  def actionRange(actionId: Int) : Int
+  def actionRange(actionId: Int): Int
 
   /**
-    * @param rowIndex row to get text for
+    * @param rowIndex    row to get text for
     * @param columnIndex column to get text for
     * @return the text representation of the cell
     */
   def cellContentToText(rowIndex: Int, columnIndex: Int): String
 
   /**
-    * @param rowIndex row to get content for
+    * @param rowIndex    row to get content for
     * @param columnIndex column to get content for
     * @return the GameObject at the cell
     */
-  def cellContent(rowIndex: Int, columnIndex: Int) : Option[GameObject]
+  def cellContent(rowIndex: Int, columnIndex: Int): Option[GameObject]
 
   /**
-    * @param rowIndex row to get path of the image representation
+    * @param rowIndex    row to get path of the image representation
     * @param columnIndex column to get path of the image representation
     * @return the path of the image representation of the cell
     */
@@ -76,6 +76,7 @@ trait GameModel extends Publisher {
   /**
     * Calculates the cells in range for active player and given actionId
     * when no action id is enabled, result is always empty
+    *
     * @param actionId the id of the action to calculate cells in range for
     * @return the list of the cells in range
     **/
@@ -89,36 +90,40 @@ trait GameModel extends Publisher {
   /**
     * Executes the given action id in the given direction
     * NOTE: always call GameModel#canExecuteAction(Int, Direction) before
-    * @param actionId the id of the action to execute
+    *
+    * @param actionId  the id of the action to execute
     * @param direction the direction of the action to execute
     */
-  def executeAction(actionId: Int, direction:Direction): (GameModel, List[Event])
+  def executeAction(actionId: Int, direction: Direction): (GameModel, List[Event])
 
   /**
     * Executes the given action id in the given direction
     * NOTE: always call GameModel#canExecuteAction(Int, Int, Int) before
-    * @param actionId the id of the action to execute
-    * @param rowIndex the target row
+    *
+    * @param actionId    the id of the action to execute
+    * @param rowIndex    the target row
     * @param columnIndex the target column
     */
   def executeAction(actionId: Int, rowIndex: Int, columnIndex: Int): (GameModel, List[Event])
 
   /**
     * Verifies if the action for given id in given direction can be executed or will result in an error
-    * @param actionId the id of the action to check
+    *
+    * @param actionId  the id of the action to check
     * @param direction the direction of the action to check
     * @return true when the action can be executed otherwise false
     */
-  def canExecuteAction(actionId: Int, direction: Direction) : Boolean
+  def canExecuteAction(actionId: Int, direction: Direction): Boolean
 
   /**
     * Verifies if the action for given id in given direction can be executed or will result in an error
-    * @param actionId the id of the action to check
-    * @param rowIndex the target row of the action to check
+    *
+    * @param actionId    the id of the action to check
+    * @param rowIndex    the target row of the action to check
     * @param columnIndex the target column of the action to check
     * @return true when the action can be executed otherwise false
     */
-  def canExecuteAction(actionId: Int, rowIndex: Int, columnIndex: Int) : Boolean
+  def canExecuteAction(actionId: Int, rowIndex: Int, columnIndex: Int): Boolean
 
   /**
     * @return the id of the last executed action if present
@@ -158,9 +163,10 @@ trait GameModel extends Publisher {
 
   /**
     * Starts a game configured by given scenario id
+    *
     * @param scenarioId the scenario id to configure game from
     */
-  def startGame(scenarioId: Int) : GameModel
+  def startGame(scenarioId: Int): Future[GameModel]
 
   /**
     * @return the row count of the game board
