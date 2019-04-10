@@ -1,9 +1,9 @@
 package de.htwg.se.msiwar.aview.swing
 
 import de.htwg.se.msiwar.controller.Controller
-import de.htwg.se.msiwar.model.{CouldNotGenerateGame, GameStarted, PlayerWon}
+import de.htwg.se.msiwar.model.{GameStarted, PlayerWon}
 import de.htwg.se.msiwar.util.ImageUtils
-import javax.swing.WindowConstants
+import javax.swing.{JOptionPane, WindowConstants}
 
 import scala.swing._
 
@@ -30,6 +30,7 @@ class SwingFrame(controller: Controller) extends Frame {
     case e: PlayerWon =>
       contentPanel.showPlayerWon(e)
       packAndCenter()
+    case e: Error => JOptionPane.showMessageDialog(this.contentPanel.self, e.getMessage, "Fehlermeldung", JOptionPane.PLAIN_MESSAGE)
   }
 
   private def packAndCenter(): Unit = {
