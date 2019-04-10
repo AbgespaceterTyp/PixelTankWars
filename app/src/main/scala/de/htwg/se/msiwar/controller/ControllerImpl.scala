@@ -48,10 +48,11 @@ case class ControllerImpl(var model: GameModel) extends Controller {
     cellsInRange(model.lastExecutedActionId)
   }
 
-  override def cellsInRange(actionId: Option[Int]): List[(Int, Int)] = {
-    val cells = model.cellsInRange(actionId)
-    publish(CellsInRange(cells))
-    cells
+  override def cellsInRange(actionId: Option[Int]): Unit = {
+    model.cellsInRange(actionId).onComplete {
+      case Success(cells) => publish(CellsInRange(cells))
+      case Failure(exception) => publish(Error(exception.getMessage))
+    }
   }
 
   override def canExecuteAction(actionId: Int, direction: Direction): Future[Boolean] = {

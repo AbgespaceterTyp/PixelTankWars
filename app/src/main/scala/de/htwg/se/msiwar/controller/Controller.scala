@@ -35,7 +35,7 @@ trait Controller extends Publisher {
     *
     * @param actionId the id of the action to calculate cells in range for
     **/
-  def cellsInRange(actionId: Option[Int]): List[(Int, Int)]
+  def cellsInRange(actionId: Option[Int]): Unit
 
   /**
     * Executes the given action id in the given direction

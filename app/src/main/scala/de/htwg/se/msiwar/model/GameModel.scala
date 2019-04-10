@@ -80,7 +80,7 @@ trait GameModel extends Publisher {
     * @param actionId the id of the action to calculate cells in range for
     * @return the list of the cells in range
     **/
-  def cellsInRange(actionId: Option[Int]): List[(Int, Int)]
+  def cellsInRange(actionId: Option[Int]): Future[List[(Int, Int)]]
 
   /**
     * @return the used game config provider

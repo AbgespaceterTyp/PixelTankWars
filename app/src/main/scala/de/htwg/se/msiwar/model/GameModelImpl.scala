@@ -205,7 +205,6 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
     }
   }
 
-  //TODO Future
   override def canExecuteAction(actionId: Int, rowIndex: Int, columnIndex: Int): Future[Boolean] = {
     gameBoard.player(playerNumber) match {
       case Some(player) => canExecuteAction(actionId, gameBoard.calculateDirection(player.position, Position(rowIndex, columnIndex)))
@@ -213,7 +212,6 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
     }
   }
 
-  //TODO Future
   override def canExecuteAction(actionId: Int, direction: Direction): Future[Boolean] = {
     Future {
       winnerId match {
@@ -307,19 +305,20 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
     gameBoard.gameObjectAt(rowIndex, columnIndex)
   }
 
-  //TODO Future
-  override def cellsInRange(actionId: Option[Int]): List[(Int, Int)] = {
-    actionId match {
-      case Some(action) => {
-        gameBoard.player(playerNumber) match {
-          case Some(player) => player.actions.find(_.id == action) match {
-            case Some(actionFound) => gameBoard.reachableCells(player.position, actionFound)
+  override def cellsInRange(actionId: Option[Int]): Future[List[(Int, Int)]] = {
+    Future {
+      actionId match {
+        case Some(action) => {
+          gameBoard.player(playerNumber) match {
+            case Some(player) => player.actions.find(_.id == action) match {
+              case Some(actionFound) => gameBoard.reachableCells(player.position, actionFound)
+              case None => List()
+            }
             case None => List()
           }
-          case None => List()
         }
+        case None => List()
       }
-      case None => List()
     }
   }
 
