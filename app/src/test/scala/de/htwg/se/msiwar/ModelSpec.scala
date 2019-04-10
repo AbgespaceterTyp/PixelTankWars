@@ -226,14 +226,6 @@ class ModelSpec extends FlatSpec with Matchers {
     model.lastExecutedActionId.isDefined should be(false)
   }
 
-  it should "return an empty list when action id is not set" in {
-    val testConfigProvider = new TestConfigProvider
-    testConfigProvider.load2PlayerEmptyMapScenario()
-
-    val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
-    model.cellsInRange(Option.empty[Int]) should be (List())
-  }
-
   it should "return value of X when a cell content has no object" in {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerSmallMapScenario()
