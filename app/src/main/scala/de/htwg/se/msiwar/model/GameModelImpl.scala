@@ -57,14 +57,14 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
       case None => Option.empty
     }
   }
-
+  //TODO Future
   override def executeAction(actionId: Int, rowIndex: Int, columnIndex: Int): (GameModel, List[Event]) = {
     gameBoard.player(playerNumber) match {
       case Some(player) => executeAction(actionId, gameBoard.calculateDirection(player.position, Position(rowIndex, columnIndex)))
       case None => (this, List())
     }
   }
-
+  //TODO Future
   override def executeAction(actionId: Int, direction: Direction): (GameModel, List[Event]) = {
     gameBoard.player(playerNumber) match {
       case Some(activePlayer) => {
@@ -202,14 +202,14 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
       case None => Option.empty[Int]
     }
   }
-
+  //TODO Future
   override def canExecuteAction(actionId: Int, rowIndex: Int, columnIndex: Int): Boolean = {
     gameBoard.player(playerNumber) match {
       case Some(player) => canExecuteAction(actionId, gameBoard.calculateDirection(player.position, Position(rowIndex, columnIndex)))
       case None => false
     }
   }
-
+  //TODO Future
   override def canExecuteAction(actionId: Int, direction: Direction): Boolean = {
     winnerId match {
       case Some(_) => false
@@ -300,7 +300,7 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
   override def cellContent(rowIndex: Int, columnIndex: Int): Option[GameObject] = {
     gameBoard.gameObjectAt(rowIndex, columnIndex)
   }
-
+  //TODO Future
   override def cellsInRange(actionId: Option[Int]): List[(Int, Int)] = {
     actionId match {
       case Some(action) => {

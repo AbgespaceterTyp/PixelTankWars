@@ -115,7 +115,7 @@ case class ControllerImpl(var model: GameModel) extends Controller {
         publish(GameStarted())
         publish(TurnStarted(model.activePlayerNumber))
       }
-      case Failure(_) => //TODO Handle Failure
+      case Failure(exception) => publish(Error(exception.getMessage))
     }
   }
 
