@@ -30,7 +30,10 @@ class SwingFrame(controller: Controller) extends Frame {
     case e: PlayerWon =>
       contentPanel.showPlayerWon(e)
       packAndCenter()
-    case e: Error => JOptionPane.showMessageDialog(this.contentPanel.self, e.getMessage, "Fehlermeldung", JOptionPane.PLAIN_MESSAGE)
+    case e: Error => {
+      println(e.getMessage)
+      JOptionPane.showMessageDialog(this.contentPanel.self, e.getMessage, "Fehlermeldung", JOptionPane.PLAIN_MESSAGE)
+    }
   }
 
   private def packAndCenter(): Unit = {
