@@ -7,8 +7,10 @@ import de.htwg.se.msiwar.model._
 import de.htwg.se.msiwar.util.Direction
 import org.scalatest.{FlatSpec, Matchers}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Promise}
+import scala.util.{Failure, Success}
 
 class ControllerSpec extends FlatSpec with Matchers {
   private val resourcePathPrefix = "src/main/resources/"
@@ -93,9 +95,9 @@ class ControllerSpec extends FlatSpec with Matchers {
 
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     val controller = ControllerImpl(model)
-    controller.canExecuteAction(2, Direction.DOWN) should be(true)
+    Await.result(controller.canExecuteAction(2, Direction.DOWN), 500 millis) should be(true)
     controller.executeAction(2, Direction.DOWN)
-    controller.canExecuteAction(2, 1, 0) should be(true)
+    Await.result(controller.canExecuteAction(2, 1, 0), 500 millis) should be(true)
     controller.executeAction(1, 1, 0)
   }
 
@@ -198,11 +200,11 @@ class ControllerSpec extends FlatSpec with Matchers {
     testConfigProvider.load2PlayerEmptyMapScenario()
 
     var model: GameModel = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
-    model.canExecuteAction(3, Direction.DOWN) should be(true)
-    model = model.executeAction(3, Direction.DOWN)._1
+    Await.result(model.canExecuteAction(3, Direction.DOWN), 500 millis) should be(true)
+    model = Await.result(model.executeAction(3, Direction.DOWN), 500 millis)._1
     model.turnCounter should be(1)
-    model.canExecuteAction(3, Direction.DOWN) should be(true)
-    model = model.executeAction(3, Direction.DOWN)._1
+    Await.result(model.canExecuteAction(3, Direction.DOWN), 500 millis) should be(true)
+    model = Await.result(model.executeAction(3, Direction.DOWN), 500 millis)._1
     model.turnCounter should be(2)
   }
 
@@ -217,8 +219,8 @@ class ControllerSpec extends FlatSpec with Matchers {
     while (actionIdsIterator.hasNext) {
       val actionId = actionIdsIterator.next()
       val actionPointsBefore = model.activePlayerActionPoints
-      model.canExecuteAction(actionId, Direction.DOWN) should be(true)
-      model = model.executeAction(actionId, Direction.DOWN)._1
+      Await.result(model.canExecuteAction(actionId, Direction.DOWN), 500 millis) should be(true)
+      model = Await.result(model.executeAction(actionId, Direction.DOWN), 500 millis)._1
       actionPointsBefore should be > model.activePlayerActionPoints
       model = model.init(testConfigProvider)
     }
@@ -230,18 +232,21 @@ class ControllerSpec extends FlatSpec with Matchers {
 
     val gameBoard = GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects)
     var model: GameModel = GameModelImpl(testConfigProvider, gameBoard, Option.empty[Action], 1, 1)
-    val player2BeforeDamagingOpt = model.cellContent(1,0).get
+    val player2BeforeDamagingOpt = model.cellContent(1, 0).get
     player2BeforeDamagingOpt match {
       case p: PlayerObject => p.healthPoints should be(3)
     }
 
-    model.canExecuteAction(2, Direction.DOWN) should be(true)
-    model = model.executeAction(2, Direction.DOWN)._1
-
-    val player2AfterDamagingOpt = model.cellContent(1,0).get
-    player2AfterDamagingOpt match {
-      case p: PlayerObject => p.healthPoints should be(1)
-    }
+    Await.result(model.canExecuteAction(2, Direction.DOWN), 500 millis) should be(true)
+    model.executeAction(2, Direction.DOWN).onComplete({
+      case Success(value) => {
+        model = value._1
+        val player2AfterDamagingOpt = model.cellContent(1, 0).get
+        player2AfterDamagingOpt match {
+          case p: PlayerObject => p.healthPoints should be(1)
+        }
+      }
+    })
   }
 
   it should "return winner id of player 1 when player 2 gets destroyed" in {
@@ -249,12 +254,21 @@ class ControllerSpec extends FlatSpec with Matchers {
     testConfigProvider.load2PlayerDamageTestScenario()
 
     var model: GameModel = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
-    model.canExecuteAction(2, Direction.DOWN) should be(true)
-    model = model.executeAction(2, Direction.DOWN)._1
-    model.canExecuteAction(2, Direction.DOWN) should be(true)
-    model = model.executeAction(2, Direction.DOWN)._1
-    model.winnerId.isDefined should be(true)
-    model.winnerId.get should be(1)
+    Await.result(model.canExecuteAction(2, Direction.DOWN), 500 millis) should be(true)
+    model.executeAction(2, Direction.DOWN).onComplete({
+      case Success(value) => {
+        model = value._1
+        Await.result(model.canExecuteAction(2, Direction.DOWN), 500 millis) should be(true)
+        model.executeAction(2, Direction.DOWN).onComplete({
+          case Success(value) => {
+            model = value._1
+            model.winnerId.isDefined should be(true)
+            model.winnerId.get should be(1)
+          }
+        })
+      }
+      case Failure(_) => false should be(true)
+    })
   }
 
   it should "return no action ids for a dead player" in {
@@ -262,8 +276,7 @@ class ControllerSpec extends FlatSpec with Matchers {
     testConfigProvider.load3PlayerTestScenario()
 
     var model: GameModel = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
-    model = model.executeAction(2, Direction.DOWN)._1
-    model.actionIdsForPlayer(2).isEmpty should be(true)
+    Await.result(model.executeAction(2, Direction.DOWN), 500 millis)._1.actionIdsForPlayer(2).isEmpty should be(true)
   }
 
   it should "return range value for an action id" in {

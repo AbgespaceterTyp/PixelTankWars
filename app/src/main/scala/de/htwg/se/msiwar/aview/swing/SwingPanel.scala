@@ -9,8 +9,10 @@ import de.htwg.se.msiwar.model._
 import de.htwg.se.msiwar.util.{ImageUtils, SoundPlayer}
 import javax.swing.SwingUtilities
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.swing.event.{KeyTyped, MousePressed}
 import scala.swing.{BorderPanel, Graphics2D, GridPanel, Label, Reactor}
+import scala.util.{Failure, Success}
 
 class SwingPanel(controller: Controller) extends BorderPanel with Reactor {
   private val grid_size_factor = 60
@@ -122,11 +124,18 @@ class SwingPanel(controller: Controller) extends BorderPanel with Reactor {
           listenTo(mouse.clicks)
           reactions += {
             case _: MousePressed =>
-              val activeActionId = actionPanel.activeActionId
-              if (activeActionId.isDefined && controller.canExecuteAction(activeActionId.get, i, j)) {
-                controller.executeAction(actionPanel.activeActionId.get, i, j)
-              } else {
-                // TODO play sound
+              actionPanel.activeActionId match {
+                case Some(activeAction) => {
+                  controller.canExecuteAction(activeAction, i, j).onComplete({
+                    case Success(value) => {
+                      if (value) {
+                        controller.executeAction(actionPanel.activeActionId.get, i, j)
+                      }
+                    }
+                    case Failure(_) => println("Failed to execute action")
+                  })
+                }
+                case None =>
               }
           }
         }

@@ -4,6 +4,9 @@ import de.htwg.se.msiwar.model._
 import de.htwg.se.msiwar.util.Direction
 import org.scalatest.{FlatSpec, Matchers}
 
+import scala.concurrent.Await
+import scala.concurrent.duration._
+
 
 class ModelSpec extends FlatSpec with Matchers {
   private val turn = 1
@@ -37,7 +40,7 @@ class ModelSpec extends FlatSpec with Matchers {
     testConfigProvider.loadInstantWinScenario()
 
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
-    model.canExecuteAction(1, Direction.DOWN) should be(false)
+    Await.result(model.canExecuteAction(1, Direction.DOWN), 500 millis) should be(false)
   }
 
   it should "return the health of the active player" in {
@@ -194,7 +197,7 @@ class ModelSpec extends FlatSpec with Matchers {
 
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.executeAction(2, Direction.DOWN)
-    model.canExecuteAction(2, Direction.DOWN) should be(true)
+    Await.result(model.canExecuteAction(2, Direction.DOWN), 500 millis) should be(true)
   }
 
   it should "allow to shoot at a blocking object which is not a player" in {
@@ -203,7 +206,7 @@ class ModelSpec extends FlatSpec with Matchers {
 
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.executeAction(2, Direction.UP)
-    model.canExecuteAction(2, Direction.UP) should be(true)
+    Await.result(model.canExecuteAction(2, Direction.UP), 500 millis) should be(true)
   }
 
   it should "allow the player to move" in {
@@ -212,7 +215,7 @@ class ModelSpec extends FlatSpec with Matchers {
 
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     model.executeAction(1, Direction.DOWN)
-    model.canExecuteAction(1, Direction.DOWN) should be(true)
+    Await.result(model.canExecuteAction(1, Direction.DOWN), 500 millis) should be(true)
   }
 
   it should "not return a last executed action id at game start" in {

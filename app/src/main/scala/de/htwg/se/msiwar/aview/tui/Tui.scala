@@ -3,8 +3,9 @@ package de.htwg.se.msiwar.aview.tui
 import de.htwg.se.msiwar.controller._
 import de.htwg.se.msiwar.model._
 import de.htwg.se.msiwar.util.Direction._
-
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.swing.Reactor
+import scala.util.Success
 
 class Tui(controller: Controller) extends Reactor {
   listenTo(controller)
@@ -100,12 +101,16 @@ class Tui(controller: Controller) extends Reactor {
   private def executeAction(actionId: Int, direction: String): Unit = {
     val convertedDirection = convertToDirection(direction)
     if (convertedDirection.isDefined) {
-      if (controller.canExecuteAction(actionId, convertedDirection.get)) {
-        println("Executing action " + actionId + " '" + controller.actionDescription(actionId) + "' in direction '" + convertedDirection.get + "'")
-        controller.executeAction(actionId, convertedDirection.get)
-      } else {
-        println("Action can not be executed")
-      }
+      controller.canExecuteAction(actionId, convertedDirection.get).onComplete({
+        case Success(canExecute) => {
+          if (canExecute) {
+            println("Executing action " + actionId + " '" + controller.actionDescription(actionId) + "' in direction '" + convertedDirection.get + "'")
+            controller.executeAction(actionId, convertedDirection.get)
+          } else {
+            println("Action can not be executed")
+          }
+        }
+      })
     }
   }
 
