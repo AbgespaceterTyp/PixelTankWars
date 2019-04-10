@@ -8,11 +8,6 @@ import scala.swing.event.Event
 import scala.util.{Failure, Success}
 
 case class ControllerImpl(var model: GameModel) extends Controller {
-  listenTo(model)
-
-  reactions += {
-    case _: ModelCouldNotGenerateGame => publish(CouldNotGenerateGame())
-  }
 
   override def cellContentToText(rowIndex: Int, columnIndex: Int): String = {
     model.cellContentToText(rowIndex, columnIndex)

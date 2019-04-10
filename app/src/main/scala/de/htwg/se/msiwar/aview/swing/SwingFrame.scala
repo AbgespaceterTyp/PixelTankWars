@@ -30,9 +30,6 @@ class SwingFrame(controller: Controller) extends Frame {
     case e: PlayerWon =>
       contentPanel.showPlayerWon(e)
       packAndCenter()
-    case _: CouldNotGenerateGame =>
-      import javax.swing.JOptionPane
-      JOptionPane.showMessageDialog(null, "Unfortunately the game could not be generated", "Game Error", JOptionPane.PLAIN_MESSAGE)
   }
 
   private def packAndCenter(): Unit = {

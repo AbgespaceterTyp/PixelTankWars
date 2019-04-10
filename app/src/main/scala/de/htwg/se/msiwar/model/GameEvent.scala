@@ -4,8 +4,6 @@ import scala.swing.event.Event
 
 case class GameStarted() extends Event
 
-case class CouldNotGenerateGame() extends Event
-
 case class CellChanged(rowColumnIndexes: List[(Int, Int)]) extends Event
 
 case class CellsInRange(rowColumnIndexes: List[(Int, Int)]) extends Event
