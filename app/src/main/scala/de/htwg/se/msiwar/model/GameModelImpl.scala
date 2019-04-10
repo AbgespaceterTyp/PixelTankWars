@@ -5,7 +5,6 @@ import de.htwg.se.msiwar.util.Direction.Direction
 import de.htwg.se.msiwar.util.{Direction, GameConfigProvider}
 
 import scala.swing.event.Event
-import scala.util.control.Breaks
 
 case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: GameBoard, lastExecutedAction: Option[Action], playerNumber: Int, turnNumber: Int) extends GameModel {
 

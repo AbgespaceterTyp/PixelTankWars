@@ -1,13 +1,10 @@
 package de.htwg.se.msiwar.util
 
-import java.io.FileNotFoundException
-
-import akka.actor.{ActorSystem, Props}
-import de.htwg.se.msiwar.model.ActionType._
 import de.htwg.se.msiwar.model._
 
 import scala.io.Source
 import scala.util.parsing.json.JSON
+import scala.util.{Failure, Success, Try}
 
 case class JSONException(private val message: String = "JSON parsing failed") extends Exception(message)
 
@@ -19,10 +16,17 @@ case class GameConfigProviderImpl(gameObjects: List[GameObject], attackSoundPath
     FileLoader.loadFilesFromDirPath("/scenarios").sorted
   }
 
-  @throws(classOf[FileNotFoundException])
-  @throws(classOf[JSONException])
-  @throws(classOf[NoSuchElementException])
   def loadFromFile(configFilePath: String): GameConfigProvider = {
+    Try(load(configFilePath)) match {
+      case Success(configProvider) => configProvider
+      case Failure(exception) => {
+        println("Failed to load scenario: " + exception.getMessage)
+        this
+      }
+    }
+  }
+
+  private def load(configFilePath: String): GameConfigProvider = {
     var newAttackSoundPath = "sounds/explosion.wav"
     var newLevelBackgroundImagePath = "images/background_woodlands.png"
     var newActionbarBackgroundImagePath = "images/background_actionbar.png"
