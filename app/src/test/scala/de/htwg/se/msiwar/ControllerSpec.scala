@@ -333,6 +333,22 @@ class ControllerSpec extends FlatSpec with Matchers {
     controller.startGame(0)
   }
 
+  it should "start a random game" in {
+    val gameStartedPromise = Promise[Boolean]()
+
+    val testConfigProvider = new TestConfigProvider
+    testConfigProvider.load2PlayerDamageTestScenario()
+
+    val model: GameModel = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
+    val controller = ControllerImpl(model)
+
+    TestEventHandler(model, controller, Option(gameStartedPromise), Option.empty, Option.empty)
+    controller.startRandomGame()
+
+    val result = Await.result(gameStartedPromise.future, 5000 millis)
+    result should be(true)
+  }
+
   it should "start a new game for valid scenario id and return the correct initial events" in {
     val testConfigProvider = new TestConfigProvider
     testConfigProvider.load2PlayerDamageTestScenario()
@@ -348,5 +364,22 @@ class ControllerSpec extends FlatSpec with Matchers {
 
     Await.result(gameStartedPromise.future, 500 millis) should be(true)
     Await.result(turnStartedPromise.future, 500 millis) should be(1)
+  }
+
+  it should " fail at starting a random game with invalid row and column configuration" in {
+
+    val couldNotGenerateGamePromise = Promise[Boolean]()
+
+    val testConfigProvider = new TestConfigProvider
+    testConfigProvider.load2PlayerDamageTestScenario()
+
+    val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
+    val controller = ControllerImpl(model)
+
+    TestEventHandler(controller.model, controller, Option.empty, Option(couldNotGenerateGamePromise), Option.empty)
+    model.startRandomGame(0, 0)
+
+    val result = Await.result(couldNotGenerateGamePromise.future, 5000 millis)
+    result should be(true)
   }
 }

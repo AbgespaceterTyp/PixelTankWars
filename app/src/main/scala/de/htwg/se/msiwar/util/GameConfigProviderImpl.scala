@@ -151,4 +151,24 @@ case class GameConfigProviderImpl(gameObjects: List[GameObject], attackSoundPath
 
     PlayerObject(name, imagePath, Position(rowIndex, columnIndex), viewDirectionOpt.get, playerNumber, wonImagePath, maxActionPoints, maxActionPoints, maxHealthPoints, maxHealthPoints, actions)
   }
+
+  override def generateGame(rowCount: Int, columnCount: Int, completion: (Boolean) => Unit): GameConfigProvider = {
+    var newGameObjects: List[GameObject] = List[GameObject]()
+
+    val system = ActorSystem("GameGenerationSystem")
+    val master = system.actorOf(Props(new GameGenerationMaster(numberOfWorkers = 4, numberOfMessages = 100, rowCount, colCount, (gameObjects) => {
+      if (gameObjects.isDefined) {
+        newGameObjects = newGameObjects ::: gameObjects.get
+        completion(true)
+      } else {
+        completion(false)
+      }
+      system.terminate()
+    })), name = "master")
+
+    master ! Generate
+    copy(newGameObjects, "sounds/explosion.wav", "images/background_opening.png",
+      "images/background_woodlands.png", "images/background_actionbar.png", "images/hit.png",
+      "images/app_icon.png", rowCount, columnCount)
+  }
 }
