@@ -95,7 +95,7 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
               }
               newGameBoard = updateActionPoints(newGameBoard, activePlayerNumber, actionToExecute)
 
-              val nextTurn = updateTurn(Option(actionToExecute), newGameBoard)
+              val nextTurn = updateTurn(Option(actionToExecute), newActivePlayer.actionPoints, newGameBoard)
               // Reset player actions points when turn changed
               if (nextTurn._2 != turnNumber) {
                 newGameBoard = resetPlayerActionPoints(newGameBoard, newGameBoard.players)
@@ -146,11 +146,11 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
     collisionObject match {
       case playerObjectHit: PlayerObject =>
         val newGameBoard = damageAndRemoveDeadPlayer(playerObjectHit, gameBoard, shootAction)
-        val events = List(CellChanged(List((playerObjectHit.position.rowIdx, playerObjectHit.position.columnIdx),(playerPosition.rowIdx, playerPosition.columnIdx))),
+        val events = List(CellChanged(List((playerObjectHit.position.rowIdx, playerObjectHit.position.columnIdx), (playerPosition.rowIdx, playerPosition.columnIdx))),
           AttackResult(collisionObject.position.rowIdx, collisionObject.position.columnIdx, hit = true, gameConfigProvider.attackImagePath, gameConfigProvider.attackSoundPath))
         (newGameBoard, events)
       case blockObject: BlockObject => {
-        val events = List(CellChanged(List((blockObject.position.rowIdx, blockObject.position.columnIdx),(playerPosition.rowIdx, playerPosition.columnIdx))),
+        val events = List(CellChanged(List((blockObject.position.rowIdx, blockObject.position.columnIdx), (playerPosition.rowIdx, playerPosition.columnIdx))),
           AttackResult(collisionObject.position.rowIdx, collisionObject.position.columnIdx, hit = true, gameConfigProvider.attackImagePath, gameConfigProvider.attackSoundPath))
         (gameBoard, events)
       }
@@ -174,27 +174,32 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
     }
   }
 
-  private def updateTurn(lastAction: Option[Action], currentGameBoard: GameBoard): (Int, Int) = {
-    currentGameBoard.player(playerNumber) match {
-      case Some(player) => {
-        if (player.actionPoints <= 0) {
-          currentGameBoard.players.find(_.playerNumber > activePlayerNumber) match {
-            case Some(nextPlayer) => {
-              (nextPlayer.playerNumber, turnCounter)
-            }
-            case None => {
-              // If every player did his turn, start the next turn with first player alive
-              val nextTurnNumber = turnCounter + 1
-              // Set next player to first player found which is alive
-              val nextPlayer = currentGameBoard.players.reduceLeft((a, b) => if (a.playerNumber < b.playerNumber) a else b)
-              (nextPlayer.playerNumber, nextTurnNumber)
-            }
-          }
+  private def updateTurn(lastAction: Option[Action], currentActionPoints: Int, currentGameBoard: GameBoard): (Int, Int) = {
+    if (0 >= currentActionPoints) {
+      val foundPlayer = nextPlayer(activePlayerNumber, currentGameBoard)
+      // When next player number is lower than current one, every player has played his turn and we need to update turn counter
+      if (foundPlayer.playerNumber > activePlayerNumber) {
+        (foundPlayer.playerNumber, turnCounter)
+      } else {
+        val nextTurnNumber = turnCounter + 1
+        (foundPlayer.playerNumber, nextTurnNumber)
+      }
+    } else {
+      (playerNumber, turnNumber)
+    }
+  }
+
+  private def nextPlayer(playerNumber: Int, gameBoard: GameBoard): PlayerObject = {
+    val nextPlayerNumber = playerNumber + 1
+    gameBoard.player(nextPlayerNumber) match {
+      case Some(player) => player
+      case None => {
+        if (nextPlayerNumber >= gameBoard.players.size) {
+          nextPlayer(0, gameBoard)
         } else {
-          (playerNumber, turnNumber)
+          nextPlayer(nextPlayerNumber, gameBoard)
         }
       }
-      case None => (playerNumber, turnNumber)
     }
   }
 
