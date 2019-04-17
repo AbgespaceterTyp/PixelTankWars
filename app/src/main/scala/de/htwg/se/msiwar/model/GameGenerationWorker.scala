@@ -2,6 +2,8 @@ package de.htwg.se.msiwar.model
 
 import akka.actor.Actor
 
+import scala.util.{Failure, Success, Try}
+
 sealed trait GenerationMessage
 
 case object Generate extends GenerationMessage
@@ -13,10 +15,9 @@ case class Result(gameObjectsOpt: Option[List[GameObject]]) extends GenerationMe
 class GameGenerationWorker extends Actor {
 
   def generate(rowCount: Int, columnCount: Int): Option[List[GameObject]] = {
-    try {
-      GameGenerator(rowCount, columnCount).generate()
-    } catch {
-      case _: Exception => Option.empty
+    Try(GameGenerator(rowCount, columnCount)) match {
+      case Success(gameGenerator) => gameGenerator.generate()
+      case Failure(_) => Option.empty
     }
   }
 
