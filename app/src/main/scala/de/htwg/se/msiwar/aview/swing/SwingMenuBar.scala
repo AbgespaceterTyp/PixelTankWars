@@ -3,7 +3,7 @@ package de.htwg.se.msiwar.aview.swing
 import de.htwg.se.msiwar.controller.Controller
 
 import scala.swing.event.Key
-import scala.swing.{Action, Menu, MenuBar, MenuItem}
+import scala.swing.{Action, Menu, MenuBar, MenuItem, Separator}
 
 class SwingMenuBar(controller: Controller) extends MenuBar {
 

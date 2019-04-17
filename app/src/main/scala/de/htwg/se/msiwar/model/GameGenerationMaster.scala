@@ -3,8 +3,7 @@ package de.htwg.se.msiwar.model
 import akka.actor.{Actor, Props}
 import akka.routing.RoundRobinPool
 
-class GameGenerationMaster(numberOfWorkers: Int, numberOfMessages: Int, rowCount: Int, columnCount: Int, completion: (Option[List[GameObject]]) => Unit)
-  extends Actor {
+class GameGenerationMaster(numberOfWorkers: Int, numberOfMessages: Int, rowCount: Int, columnCount: Int, completion: (Option[List[GameObject]]) => Unit) extends Actor {
 
   private val workerRouter = context.actorOf(Props[GameGenerationWorker].withRouter(RoundRobinPool(numberOfWorkers)), name = "workerRouter")
   private var messageCounter = 0
@@ -22,5 +21,4 @@ class GameGenerationMaster(numberOfWorkers: Int, numberOfMessages: Int, rowCount
         completion(Option.empty)
       }
   }
-
 }
