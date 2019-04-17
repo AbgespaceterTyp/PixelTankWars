@@ -134,7 +134,7 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
     gameBoard.calculatePositionForDirection(player.position, direction, shootAction.range) match {
       case Some(positionForDirection) => {
         gameBoard.collisionObject(player.position, positionForDirection, ignoreLastPosition = false) match {
-          case Some(collisionObject) => playerOrBlockHit(collisionObject, gameBoard, shootAction)
+          case Some(collisionObject) => playerOrBlockHit(collisionObject, player.position, gameBoard, shootAction)
           case None => (gameBoard, nothingHit(gameBoard, player.position, direction, shootAction))
         }
       }
@@ -142,24 +142,24 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
     }
   }
 
-  private def playerOrBlockHit(collisionObject: GameObject, gameBoard: GameBoard, shootAction: Action): (GameBoard, List[Event]) = {
+  private def playerOrBlockHit(collisionObject: GameObject, playerPosition: Position, gameBoard: GameBoard, shootAction: Action): (GameBoard, List[Event]) = {
     collisionObject match {
       case playerObjectHit: PlayerObject =>
         val newGameBoard = damageAndRemoveDeadPlayer(playerObjectHit, gameBoard, shootAction)
-        val events = List(CellChanged(List((playerObjectHit.position.rowIdx, playerObjectHit.position.columnIdx))),
+        val events = List(CellChanged(List((playerObjectHit.position.rowIdx, playerObjectHit.position.columnIdx),(playerPosition.rowIdx, playerPosition.columnIdx))),
           AttackResult(collisionObject.position.rowIdx, collisionObject.position.columnIdx, hit = true, gameConfigProvider.attackImagePath, gameConfigProvider.attackSoundPath))
         (newGameBoard, events)
       case blockObject: BlockObject => {
-        val events = List(CellChanged(List((blockObject.position.rowIdx, blockObject.position.columnIdx))),
+        val events = List(CellChanged(List((blockObject.position.rowIdx, blockObject.position.columnIdx),(playerPosition.rowIdx, playerPosition.columnIdx))),
           AttackResult(collisionObject.position.rowIdx, collisionObject.position.columnIdx, hit = true, gameConfigProvider.attackImagePath, gameConfigProvider.attackSoundPath))
         (gameBoard, events)
       }
     }
   }
 
-  private def nothingHit(gameBoard: GameBoard, startingPosition: Position, viewDirection: Direction, shootAction: Action): List[Event] = {
-    gameBoard.calculatePositionForDirection(startingPosition, viewDirection, shootAction.range) match {
-      case Some(targetPosition) => List(CellChanged(List((startingPosition.rowIdx, startingPosition.columnIdx))),
+  private def nothingHit(gameBoard: GameBoard, playerPosition: Position, viewDirection: Direction, shootAction: Action): List[Event] = {
+    gameBoard.calculatePositionForDirection(playerPosition, viewDirection, shootAction.range) match {
+      case Some(targetPosition) => List(CellChanged(List((playerPosition.rowIdx, playerPosition.columnIdx))),
         AttackResult(targetPosition.rowIdx, targetPosition.columnIdx, hit = false, gameConfigProvider.attackImagePath, gameConfigProvider.attackSoundPath))
       case None => List()
     }
