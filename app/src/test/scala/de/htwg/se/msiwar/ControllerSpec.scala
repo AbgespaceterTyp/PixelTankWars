@@ -377,7 +377,7 @@ class ControllerSpec extends FlatSpec with Matchers {
     val controller = ControllerImpl(model)
 
     TestEventHandler(controller.model, controller, Option.empty, Option(couldNotGenerateGamePromise), Option.empty)
-    model.startRandomGame(0, 0)
+    controller.startRandomGame()
 
     val result = Await.result(couldNotGenerateGamePromise.future, 5000 millis)
     result should be(true)

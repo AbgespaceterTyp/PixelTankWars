@@ -2,6 +2,7 @@ package de.htwg.se.msiwar.controller
 
 import de.htwg.se.msiwar.model.GameObject
 import de.htwg.se.msiwar.util.Direction.Direction
+import de.htwg.se.msiwar.util.GameConfigProvider
 
 import scala.concurrent.Future
 import scala.swing.Publisher
@@ -183,6 +184,13 @@ trait Controller extends Publisher {
     * @param scenarioId the scenario id to configure game from
     */
   def startGame(scenarioId: Int) : Unit
+
+  /**
+    * Starts a game configured by given game config provider
+    *
+    * @param gameConfigProvider the config provider to configure game from
+    */
+  def startGame(gameConfigProvider: Option[GameConfigProvider]): Unit
 
   /**
     * Starts a newly generated game

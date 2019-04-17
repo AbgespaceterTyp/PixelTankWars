@@ -1,14 +1,19 @@
 package de.htwg.se.msiwar.controller
 
+import akka.actor.{Actor, ActorSystem, Props}
+import akka.routing.RoundRobinPool
 import de.htwg.se.msiwar.model._
 import de.htwg.se.msiwar.util.Direction.Direction
+import de.htwg.se.msiwar.util.{GameConfigProvider, GameConfigProviderImpl}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.swing.event.Event
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Random, Success}
 
 case class ControllerImpl(var model: GameModel) extends Controller {
+
+  private val system = ActorSystem("GameGenerationSystem")
 
   override def cellContentToText(rowIndex: Int, columnIndex: Int): String = {
     model.cellContentToText(rowIndex, columnIndex)
@@ -151,9 +156,43 @@ case class ControllerImpl(var model: GameModel) extends Controller {
   }
 
   override def startRandomGame(): Unit = {
-    model = model.startRandomGame()
+    val gameGenActor = system.actorOf(Props(new GameGenerationActor(this)))
+    gameGenActor ! Generate
+  }
 
-    publish(GameStarted())
-    publish(TurnStarted(model.activePlayerNumber))
+  override def startGame(gameConfigProviderOpt: Option[GameConfigProvider]): Unit = {
+    gameConfigProviderOpt match {
+      case Some(gameConfigProvider) => {
+        model = model.init(gameConfigProvider)
+
+        publish(GameStarted())
+        publish(TurnStarted(model.activePlayerNumber))
+      }
+      case None => publish(ModelCouldNotGenerateGame())
+    }
+  }
+}
+
+class GameGenerationActor(controller: Controller) extends Actor {
+  private val workerRouter = context.actorOf(Props[GameGenerationWorker].withRouter(RoundRobinPool(10)), name = "workerRouter")
+
+  def receive: PartialFunction[Any, Unit] = {
+    case Generate =>
+      for (_ <- 0 until 10) {
+        workerRouter ! Work(Random.nextInt(10) + 2, Random.nextInt(20) + 2)
+      }
+    case Result(gameObjectsOpt, genRowCount, genColCount) =>
+      gameObjectsOpt match {
+        case Some(gameObjects) => {
+          context.stop(self)
+
+          val newGameConfigProvider = GameConfigProviderImpl(gameObjects, "sounds/explosion.wav", "images/background_opening.png",
+            "images/background_woodlands.png", "images/background_actionbar.png", "images/hit.png",
+            "images/app_icon.png", genRowCount, genColCount)
+
+          controller.startGame(Option(newGameConfigProvider))
+        }
+        case None => controller.startGame(Option.empty)
+      }
   }
 }
