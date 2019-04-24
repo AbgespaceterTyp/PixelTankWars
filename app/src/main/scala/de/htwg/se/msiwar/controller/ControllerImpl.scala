@@ -173,7 +173,7 @@ case class ControllerImpl(var model: GameModel) extends Controller {
   }
 }
 
-class GameGenerationActor(controller: Controller) extends Actor {
+case class GameGenerationActor(controller: Controller) extends Actor {
   private val workerRouter = context.actorOf(Props[GameGenerationWorker].withRouter(RoundRobinPool(10)), name = "workerRouter")
 
   def receive: PartialFunction[Any, Unit] = {
