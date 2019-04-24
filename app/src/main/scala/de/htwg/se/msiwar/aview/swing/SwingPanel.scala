@@ -165,6 +165,10 @@ class SwingPanel(controller: Controller) extends BorderPanel with Reactor {
 
   private def updateLabel(rowIndex: Int, columnIndex: Int): Unit = {
     val label = labels(rowIndex)(columnIndex)
+    if(label == null){
+      return
+    }
+
     val imagePath = controller.cellContentImagePath(rowIndex, columnIndex)
     if (imagePath.isDefined) {
       val imageOpt = ImageUtils.loadImageIcon(imagePath.get)

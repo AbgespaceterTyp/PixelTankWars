@@ -5,12 +5,10 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl._
 import de.htwg.se.msiwar.aview.MainApp
 import de.htwg.se.msiwar.util.JsonConverter
 
 import scala.io.StdIn
-import scala.util.Random
 
 object WebServer {
 
