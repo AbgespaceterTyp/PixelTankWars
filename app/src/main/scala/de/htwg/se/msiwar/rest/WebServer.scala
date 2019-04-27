@@ -28,19 +28,19 @@ object WebServer {
             }
           }
         } ~
-        path("hello") {
-          complete {
-            "HAHAHHAHAHA"
-          }
-        } ~
-        path("executeAction") {
-          parameters('actionId.as[Int], 'rowIndex.as[Int], 'columnIndex.as[Int]) { (actionId, rowIndex, columnIndex) =>
+          path("hello") {
             complete {
-              MainApp.controller.executeAction(actionId, rowIndex, columnIndex)
-              JsonConverter.gameBoardToJson().toString()
+              "HAHAHHAHAHA"
+            }
+          } ~
+          path("executeAction") {
+            parameters('actionId.as[Int], 'rowIndex.as[Int], 'columnIndex.as[Int]) { (actionId, rowIndex, columnIndex) =>
+              complete {
+                MainApp.controller.executeAction(actionId, rowIndex, columnIndex)
+                JsonConverter.gameBoardToJson().toString()
+              }
             }
           }
-        }
       }
 
     val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
