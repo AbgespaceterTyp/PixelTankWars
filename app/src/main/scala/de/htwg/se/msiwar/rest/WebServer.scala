@@ -27,7 +27,12 @@ object WebServer {
               "" + MainApp.tui.executeCommand(line)
             }
           }
-        }
+        } ~
+        path("hello") {
+          complete {
+            "HAHAHHAHAHA"
+          }
+        } ~
         path("executeAction") {
           parameters('actionId.as[Int], 'rowIndex.as[Int], 'columnIndex.as[Int]) { (actionId, rowIndex, columnIndex) =>
             complete {
