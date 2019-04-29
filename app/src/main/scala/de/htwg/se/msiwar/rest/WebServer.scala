@@ -21,19 +21,26 @@ object WebServer {
 
     val route =
       get {
-        path("command") {
+        pathPrefix("command") {
           parameters('line.as[String]) { line =>
             complete {
               "" + MainApp.tui.executeCommand(line)
             }
           }
         } ~
-          path("hello") {
-            complete {
-              "HAHAHHAHAHA"
+        pathPrefix("action") {
+          path("check") {
+            parameters('actionId.as[Int], 'rowIndex.as[Int], 'columnIndex.as[Int]) { (actionId, rowIndex, columnIndex) =>
+              complete {
+                "" + MainApp.controller.canExecuteAction(actionId, rowIndex, columnIndex)
+              }
             }
-          } ~
-          path("executeAction") {
+          }
+        }
+      } ~
+      put {
+        pathPrefix("action") {
+          path("execute") {
             parameters('actionId.as[Int], 'rowIndex.as[Int], 'columnIndex.as[Int]) { (actionId, rowIndex, columnIndex) =>
               complete {
                 MainApp.controller.executeAction(actionId, rowIndex, columnIndex)
@@ -41,6 +48,7 @@ object WebServer {
               }
             }
           }
+        }
       }
 
     val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
