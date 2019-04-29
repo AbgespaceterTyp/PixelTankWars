@@ -7,21 +7,20 @@ import scala.concurrent.Promise
 import scala.swing.Publisher
 import scala.util.Try
 
-case class TestEventHandler(gameModel: GameModel,
-                            controller: Controller,
+case class TestEventHandler(controller: Controller,
                             gameStartedPromise: Option[Promise[Boolean]],
                             couldNotGenerateGamePromise: Option[Promise[Boolean]],
                             turnStartedPromise: Option[Promise[Int]]) extends Publisher {
-  this.listenTo(gameModel)
+
   this.listenTo(controller)
 
   reactions += {
-    case e: CellChanged =>
+    case _: CellChanged =>
     case _: PlayerStatsChanged =>
-    case e: AttackResult =>
+    case _: AttackResult =>
     case e: TurnStarted => turnStartedPromise.map(p => p.complete(Try(e.playerNumber)))
-    case e: PlayerWon =>
+    case _: PlayerWon =>
     case _: GameStarted => gameStartedPromise.map(p => p.complete(Try(true)))
-    case _: ModelCouldNotGenerateGame => couldNotGenerateGamePromise.map(p => p.complete(Try(true)))
+    case _: CouldNotGenerateGame => couldNotGenerateGamePromise.map(p => p.complete(Try(true)))
   }
 }

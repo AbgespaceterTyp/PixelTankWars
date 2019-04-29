@@ -168,7 +168,7 @@ case class ControllerImpl(var model: GameModel) extends Controller {
         publish(GameStarted())
         publish(TurnStarted(model.activePlayerNumber))
       }
-      case None => publish(ModelCouldNotGenerateGame())
+      case None => publish(CouldNotGenerateGame())
     }
   }
 }

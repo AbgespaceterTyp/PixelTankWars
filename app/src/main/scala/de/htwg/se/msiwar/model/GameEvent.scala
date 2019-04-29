@@ -18,6 +18,8 @@ case class AttackResult(rowIndex: Int, columnIndex: Int, hit: Boolean, attackIma
 
 case class Error(message: String) extends Event
 
+case class CouldNotGenerateGame() extends Event
+
 trait GameEvent extends Event {
 
 }

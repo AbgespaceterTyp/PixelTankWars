@@ -343,7 +343,7 @@ class ControllerSpec extends FlatSpec with Matchers {
     val model: GameModel = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     val controller = ControllerImpl(model)
 
-    TestEventHandler(model, controller, Option(gameStartedPromise), Option.empty, Option.empty)
+    TestEventHandler(controller, Option(gameStartedPromise), Option.empty, Option.empty)
     controller.startRandomGame()
 
     val result = Await.result(gameStartedPromise.future, 5000 millis)
@@ -360,7 +360,7 @@ class ControllerSpec extends FlatSpec with Matchers {
     val model: GameModel = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     val controller = ControllerImpl(model)
 
-    TestEventHandler(model, controller, Option(gameStartedPromise), Option.empty, Option(turnStartedPromise))
+    TestEventHandler(controller, Option(gameStartedPromise), Option.empty, Option(turnStartedPromise))
     controller.startGame(0)
 
     Await.result(gameStartedPromise.future, 500 millis) should be(true)
@@ -377,10 +377,10 @@ class ControllerSpec extends FlatSpec with Matchers {
     val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
     val controller = ControllerImpl(model)
 
-    TestEventHandler(controller.model, controller, Option.empty, Option(couldNotGenerateGamePromise), Option.empty)
+    TestEventHandler(controller, Option.empty, Option(couldNotGenerateGamePromise), Option.empty)
     controller.startRandomGame()
 
-    val result = Await.result(couldNotGenerateGamePromise.future, 50000 millis)
+    val result = Await.result(couldNotGenerateGamePromise.future, 5000 millis)
     result should be(true)
   }
 }

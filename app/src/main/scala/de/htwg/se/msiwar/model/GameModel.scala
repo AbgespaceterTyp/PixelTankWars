@@ -7,8 +7,6 @@ import scala.concurrent.Future
 import scala.swing.Publisher
 import scala.swing.event.Event
 
-case class ModelCouldNotGenerateGame() extends Event
-
 trait GameModel extends Publisher {
 
   /**
