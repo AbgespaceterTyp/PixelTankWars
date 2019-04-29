@@ -21,31 +21,25 @@ object WebServer {
 
     val route =
       get {
-        pathPrefix("command") {
-          parameters('line.as[String]) { line =>
-            complete {
-              "" + MainApp.tui.executeCommand(line)
-            }
+        pathPrefix("commands" / LongNumber) { line =>
+          complete {
+            "" + MainApp.tui.executeCommand(line.toString)
           }
         } ~
-        pathPrefix("action") {
-          path("check") {
-            parameters('actionId.as[Int], 'rowIndex.as[Int], 'columnIndex.as[Int]) { (actionId, rowIndex, columnIndex) =>
-              complete {
-                "" + MainApp.controller.canExecuteAction(actionId, rowIndex, columnIndex)
-              }
+        pathPrefix("actions") {
+          path("check"/ IntNumber / IntNumber / IntNumber) { (actionId, rowIndex, columnIndex) =>
+            complete {
+              "" + MainApp.controller.canExecuteAction(actionId, rowIndex, columnIndex)
             }
           }
         }
       } ~
       put {
-        pathPrefix("action") {
-          path("execute") {
-            parameters('actionId.as[Int], 'rowIndex.as[Int], 'columnIndex.as[Int]) { (actionId, rowIndex, columnIndex) =>
-              complete {
-                MainApp.controller.executeAction(actionId, rowIndex, columnIndex)
-                JsonConverter.gameBoardToJson().toString()
-              }
+        pathPrefix("actions") {
+          path("execute" / IntNumber / IntNumber / IntNumber) { (actionId, rowIndex, columnIndex) =>
+            complete {
+              MainApp.controller.executeAction(actionId, rowIndex, columnIndex)
+              JsonConverter.gameBoardToJson().toString()
             }
           }
         }
