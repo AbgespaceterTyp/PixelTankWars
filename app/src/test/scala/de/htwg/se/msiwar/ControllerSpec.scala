@@ -203,10 +203,9 @@ class ControllerSpec extends FlatSpec with Matchers {
     Await.result(model.canExecuteAction(3, Direction.DOWN), 500 millis) should be(true)
     model = Await.result(model.executeAction(3, Direction.DOWN), 500 millis)._1
     model.turnCounter should be(1)
-    // turnCounter doesn't update anymore
-//    Await.result(model.canExecuteAction(3, Direction.DOWN), 500 millis) should be(true)
-//    model = Await.result(model.executeAction(3, Direction.DOWN), 500 millis)._1
-//    model.turnCounter + 1 should be(2)
+    Await.result(model.canExecuteAction(3, Direction.DOWN), 500 millis) should be(true)
+    model = Await.result(model.executeAction(3, Direction.DOWN), 500 millis)._1
+    model.turnCounter + 1 should be(2)
   }
 
   it should "return a lower amount of action points for active player after an action has been executed" in {
@@ -365,22 +364,5 @@ class ControllerSpec extends FlatSpec with Matchers {
 
     Await.result(gameStartedPromise.future, 500 millis) should be(true)
     Await.result(turnStartedPromise.future, 500 millis) should be(1)
-  }
-
-  it should " fail at starting a random game with invalid row and column configuration" in {
-
-    val couldNotGenerateGamePromise = Promise[Boolean]()
-
-    val testConfigProvider = new TestConfigProvider
-    testConfigProvider.load2PlayerDamageTestScenario()
-
-    val model = GameModelImpl(testConfigProvider, GameBoard(testConfigProvider.rowCount, testConfigProvider.colCount, testConfigProvider.gameObjects), Option.empty[Action], 1, 1)
-    val controller = ControllerImpl(model)
-
-    TestEventHandler(controller, Option.empty, Option(couldNotGenerateGamePromise), Option.empty)
-    controller.startRandomGame()
-
-    val result = Await.result(couldNotGenerateGamePromise.future, 5000 millis)
-    result should be(true)
   }
 }
