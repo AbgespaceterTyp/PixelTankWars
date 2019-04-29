@@ -14,6 +14,11 @@ object Routes {
       }
     } ~
     pathPrefix("cells") {
+      path("") {
+        complete {
+          JsonConverter.gameBoardToJson().toString()
+        }
+      } ~
       path(IntNumber / IntNumber) { (rowIndex, columnIndex) =>
         complete {
           MainApp.controller.cellContent(rowIndex, columnIndex) match {
@@ -36,7 +41,7 @@ object Routes {
         }
       }
     } ~
-    pathPrefix("actions") { 
+    pathPrefix("actions") {
       path("check" / IntNumber / IntNumber / IntNumber) { (actionId, rowIndex, columnIndex) =>
         complete {
           "" + MainApp.controller.canExecuteAction(actionId, rowIndex, columnIndex)
