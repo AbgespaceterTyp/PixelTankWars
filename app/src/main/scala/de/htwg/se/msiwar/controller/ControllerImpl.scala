@@ -27,18 +27,22 @@ case class ControllerImpl(var model: GameModel) extends Controller {
     model.cellContentImagePath(rowIndex, columnIndex)
   }
 
-  override def executeAction(actionId: Int, direction: Direction): Unit = {
+  override def executeAction(actionId: Int, direction: Direction): Future[(GameModel, List[Event])] = {
+    val result = model.executeAction(actionId, direction)
     model.executeAction(actionId, direction).onComplete {
       case Success(action) => checkAfterActionExecution(action)
       case Failure(exception) => publish(Error(exception.getMessage))
     }
+    result
   }
 
-  override def executeAction(actionId: Int, rowIndex: Int, columnIndex: Int): Unit = {
+  override def executeAction(actionId: Int, rowIndex: Int, columnIndex: Int): Future[(GameModel, List[Event])] = {
+    val result = model.executeAction(actionId, rowIndex, columnIndex)
     model.executeAction(actionId, rowIndex, columnIndex).onComplete {
       case Success(action) => checkAfterActionExecution(action)
       case Failure(exception) => publish(Error(exception.getMessage))
     }
+    result
   }
 
   private def checkAfterActionExecution(actionResult: (GameModel, List[Event])) = {

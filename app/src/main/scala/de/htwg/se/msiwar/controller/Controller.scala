@@ -1,11 +1,12 @@
 package de.htwg.se.msiwar.controller
 
-import de.htwg.se.msiwar.model.GameObject
+import de.htwg.se.msiwar.model.{GameModel, GameObject}
 import de.htwg.se.msiwar.util.Direction.Direction
 import de.htwg.se.msiwar.util.GameConfigProvider
 
 import scala.concurrent.Future
 import scala.swing.Publisher
+import scala.swing.event.Event
 
 trait Controller extends Publisher {
 
@@ -45,7 +46,7 @@ trait Controller extends Publisher {
     * @param actionId  the id of the action to execute
     * @param direction the direction of the action to execute
     */
-  def executeAction(actionId: Int, direction: Direction): Unit
+  def executeAction(actionId: Int, direction: Direction): Future[(GameModel, List[Event])]
 
   /**
     * Executes the given action id in the given direction
@@ -55,7 +56,7 @@ trait Controller extends Publisher {
     * @param rowIndex    the target row
     * @param columnIndex the target column
     */
-  def executeAction(actionId: Int, rowIndex: Int, columnIndex: Int): Unit
+  def executeAction(actionId: Int, rowIndex: Int, columnIndex: Int): Future[(GameModel, List[Event])]
 
   /**
     * Verifies if the action for given id in given direction can be executed or will result in an error
