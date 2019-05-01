@@ -42,32 +42,32 @@ object Routes {
       }
     } ~
     pathPrefix("actions") {
-      path("check" / IntNumber / IntNumber / IntNumber) { (actionId, rowIndex, columnIndex) =>
+      path(IntNumber / "check" / IntNumber / IntNumber) { (actionId, rowIndex, columnIndex) =>
         complete {
           "" + MainApp.controller.canExecuteAction(actionId, rowIndex, columnIndex)
         }
       } ~
-      path("cost" / IntNumber) { (actionId) =>
+      path(IntNumber / "cost") { (actionId) =>
         complete {
           "" + MainApp.controller.actionPointCost(actionId)
         }
       } ~
-      path("desc" / IntNumber) { (actionId) =>
+      path(IntNumber / "desc") { (actionId) =>
         complete {
           "" + MainApp.controller.actionDescription(actionId)
         }
       } ~
-      path("icon" / IntNumber) { (actionId) =>
+      path(IntNumber / "icon") { (actionId) =>
         complete {
           "" + MainApp.controller.actionIconPath(actionId)
         }
       } ~
-      path("damage" / IntNumber) { (actionId) =>
+      path(IntNumber / "damage") { (actionId) =>
         complete {
           "" + MainApp.controller.actionDamage(actionId)
         }
       } ~
-      path("range" / IntNumber) { (actionId) =>
+      path(IntNumber / "range") { (actionId) =>
         complete {
           "" + MainApp.controller.actionRange(actionId)
         }
