@@ -8,9 +8,9 @@ object Routes {
 
   val all =
   get {
-    pathPrefix("commands" / LongNumber) { line =>
+    pathPrefix("commands" / Remaining) { line =>
       complete {
-        "" + MainApp.tui.executeCommand(line.toString)
+        "" + MainApp.tui.executeCommand(line)
       }
     } ~
     pathPrefix("cells") {
