@@ -1,7 +1,6 @@
 package de.htwg.se.msiwar
 
 import de.htwg.se.msiwar.model._
-import de.htwg.se.msiwar.util.Direction
 import org.scalatest.{FlatSpec, Matchers}
 
 import scala.concurrent.Await

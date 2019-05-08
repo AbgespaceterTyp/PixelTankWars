@@ -1,4 +1,4 @@
-package de.htwg.se.msiwar.model
+package de.htwg.ptw.generator
 
 import akka.actor.Actor
 

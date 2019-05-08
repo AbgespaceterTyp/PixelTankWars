@@ -2,7 +2,7 @@ package de.htwg.se.msiwar.model
 
 import de.htwg.se.msiwar.model.ActionType._
 import de.htwg.se.msiwar.util.Direction.Direction
-import de.htwg.se.msiwar.util.{Direction, GameConfigProvider}
+import de.htwg.se.msiwar.util.GameConfigProvider
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

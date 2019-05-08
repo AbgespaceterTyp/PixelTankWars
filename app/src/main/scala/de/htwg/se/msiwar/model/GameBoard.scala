@@ -1,7 +1,6 @@
 package de.htwg.se.msiwar.model
 
 import de.htwg.se.msiwar.model.ActionType.ActionType
-import de.htwg.se.msiwar.util.Direction
 import de.htwg.se.msiwar.util.Direction._
 import de.htwg.se.msiwar.util.IterationFunction._
 

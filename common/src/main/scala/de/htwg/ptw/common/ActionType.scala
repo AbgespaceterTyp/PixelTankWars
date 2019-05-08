@@ -1,4 +1,4 @@
-package de.htwg.se.msiwar.model
+package de.htwg.ptw.common
 
 object ActionType extends Enumeration {
   type ActionType = Value

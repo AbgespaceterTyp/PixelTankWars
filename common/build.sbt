@@ -1,4 +1,4 @@
-name := "generator"
+name := "common"
 organization := "de.htwg.ptw"
 
 version := "0.1"
@@ -14,4 +14,3 @@ libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % "2.5.9" % Test
 libraryDependencies += "com.typesafe.akka" %% "akka-http"   % "10.1.8"
 libraryDependencies += "com.typesafe.akka" %% "akka-stream" % "2.5.19"
 libraryDependencies += "com.typesafe.play" %% "play-json" % "2.7.2"
-libraryDependencies += "de.htwg.ptw" %% "common" % "0.1"

@@ -4,7 +4,7 @@ import java.io.FileNotFoundException
 
 import de.htwg.se.msiwar.model.ActionType.{MOVE, SHOOT, WAIT}
 import de.htwg.se.msiwar.model._
-import de.htwg.se.msiwar.util.{Direction, GameConfigProvider}
+import de.htwg.se.msiwar.util.GameConfigProvider
 
 class TestConfigProvider extends GameConfigProvider {
   private var actions:List[Action] = List[Action]()
