@@ -1,4 +1,4 @@
-package de.htwg.se.msiwar.util
+package de.htwg.ptw.generator.util
 
 object Dijkstra {
 

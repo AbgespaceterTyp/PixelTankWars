@@ -1,9 +1,7 @@
-package de.htwg.se.msiwar.model
+package de.htwg.ptw.generator
 
-import de.htwg.se.msiwar.model.ActionType.{MOVE, SHOOT, WAIT}
-import de.htwg.se.msiwar.model.RandomImagePaths.blockImagePath
-import de.htwg.se.msiwar.util.Direction.Direction
-import de.htwg.se.msiwar.util.Direction
+import de.htwg.ptw.generator.RandomImagePaths.blockImagePath
+import de.htwg.ptw.generator.util.Dijkstra
 
 import scala.util.Random._
 
