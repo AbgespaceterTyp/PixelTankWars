@@ -7,7 +7,7 @@ object Routes {
 
   val all =
     get {
-      pathPrefix("commands" / IntNumber / IntNumber ) { ( rowIndex, columnIndex) =>
+      pathPrefix("generate" / IntNumber / IntNumber ) { ( rowIndex, columnIndex) =>
         complete {
           "" + GameGenerator(rowIndex, columnIndex)
         }

@@ -15,7 +15,7 @@ object WebServer {
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext = system.dispatcher
 
-    val bindingFuture = Http().bindAndHandle(Routes.all, "localhost", 8080)
+    val bindingFuture = Http().bindAndHandle(Routes.all, "localhost", 8081)
     println(s"Server online at http://localhost:8081/\nPress RETURN to stop...")
     StdIn.readLine() // let it run until user presses return
     bindingFuture
