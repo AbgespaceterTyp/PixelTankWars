@@ -1,8 +1,10 @@
 package de.htwg.se.msiwar.aview.tui
 
+import de.htwg.ptw.common.Direction
+import de.htwg.ptw.common.Direction.Direction
 import de.htwg.se.msiwar.controller._
 import de.htwg.se.msiwar.model._
-import de.htwg.se.msiwar.util.Direction._
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.swing.Reactor
 import scala.util.Success
@@ -118,14 +120,14 @@ class Tui(controller: Controller) extends Reactor {
   private def convertToDirection(direction: String): Option[Direction] = {
     var dirOption: Option[Direction] = None
     direction match {
-      case "lu" => dirOption = Option(LEFT_UP)
-      case "ld" => dirOption = Option(LEFT_DOWN)
-      case "ru" => dirOption = Option(RIGHT_UP)
-      case "rd" => dirOption = Option(RIGHT_DOWN)
-      case "l" => dirOption = Option(LEFT)
-      case "r" => dirOption = Option(RIGHT)
-      case "u" => dirOption = Option(UP)
-      case "d" => dirOption = Option(DOWN)
+      case "lu" => dirOption = Option(Direction.LEFT_UP)
+      case "ld" => dirOption = Option(Direction.LEFT_DOWN)
+      case "ru" => dirOption = Option(Direction.RIGHT_UP)
+      case "rd" => dirOption = Option(Direction.RIGHT_DOWN)
+      case "l" => dirOption = Option(Direction.LEFT)
+      case "r" => dirOption = Option(Direction.RIGHT)
+      case "u" => dirOption = Option(Direction.UP)
+      case "d" => dirOption = Option(Direction.DOWN)
       case _ => println("Unknown direction")
     }
     dirOption

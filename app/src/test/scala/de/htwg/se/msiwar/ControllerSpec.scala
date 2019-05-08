@@ -2,6 +2,7 @@ package de.htwg.se.msiwar
 
 import java.nio.file.{Files, Paths}
 
+import de.htwg.ptw.common.Direction
 import de.htwg.se.msiwar.controller.ControllerImpl
 import de.htwg.se.msiwar.model._
 import org.scalatest.{FlatSpec, Matchers}

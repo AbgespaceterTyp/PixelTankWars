@@ -2,7 +2,7 @@ package de.htwg.se.msiwar
 
 import java.io.FileNotFoundException
 
-import de.htwg.se.msiwar.model.ActionType.{MOVE, SHOOT, WAIT}
+import de.htwg.ptw.common.{ActionType, Direction}
 import de.htwg.se.msiwar.model._
 import de.htwg.se.msiwar.util.GameConfigProvider
 
@@ -37,7 +37,7 @@ class TestConfigProvider extends GameConfigProvider {
     rowCount = 2
     colCount = 1
 
-    val shootAction = Action(id=2, "Shoot", "images/action_attack.png", "shoot.wav", actionPoints=1, range=3, SHOOT, damage=2)
+    val shootAction = Action(id=2, "Shoot", "images/action_attack.png", "shoot.wav", actionPoints=1, range=3, ActionType.SHOOT, damage=2)
     actions = List(shootAction)
 
     // Setup players
@@ -51,7 +51,7 @@ class TestConfigProvider extends GameConfigProvider {
     rowCount = 3
     colCount = 3
 
-    val shootAction = Action(id=2, "Shoot", "images/action_attack.png", "shoot.wav", actionPoints=1, range=3, SHOOT, damage=3)
+    val shootAction = Action(id=2, "Shoot", "images/action_attack.png", "shoot.wav", actionPoints=1, range=3, ActionType.SHOOT, damage=3)
     actions = List(shootAction)
 
     // Setup players
@@ -68,7 +68,7 @@ class TestConfigProvider extends GameConfigProvider {
     rowCount = 3
     colCount = 4
 
-    val shootAction = Action(id=2, "Shoot", "images/action_attack.png", "shoot.wav", actionPoints=1, range=3, SHOOT, damage=2)
+    val shootAction = Action(id=2, "Shoot", "images/action_attack.png", "shoot.wav", actionPoints=1, range=3, ActionType.SHOOT, damage=2)
     actions = List(shootAction)
 
     // Setup players
@@ -88,9 +88,9 @@ class TestConfigProvider extends GameConfigProvider {
      colCount = 2
 
     // Setup actions
-    val moveAction = Action(id=1, "Move", "images/action_move.png", "move.wav", actionPoints=1, range=1, MOVE, damage=0)
-    val shootAction = Action(id=2, "Shoot", "images/action_attack.png", "shoot.wav", actionPoints=1, range=3, SHOOT, damage=2)
-    val waitAction = Action(id=3, "Wait", "images/action_wait.png", "shoot.wav", actionPoints=1, range=1, WAIT, damage=2)
+    val moveAction = Action(id=1, "Move", "images/action_move.png", "move.wav", actionPoints=1, range=1, ActionType.MOVE, damage=0)
+    val shootAction = Action(id=2, "Shoot", "images/action_attack.png", "shoot.wav", actionPoints=1, range=3, ActionType.SHOOT, damage=2)
+    val waitAction = Action(id=3, "Wait", "images/action_wait.png", "shoot.wav", actionPoints=1, range=1, ActionType.WAIT, damage=2)
     actions = List(moveAction, shootAction, waitAction)
 
     // Setup players

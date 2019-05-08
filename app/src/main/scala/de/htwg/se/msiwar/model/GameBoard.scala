@@ -1,7 +1,8 @@
 package de.htwg.se.msiwar.model
 
-import de.htwg.se.msiwar.model.ActionType.ActionType
-import de.htwg.se.msiwar.util.Direction._
+import de.htwg.ptw.common.{ActionType, Direction}
+import de.htwg.ptw.common.ActionType._
+import de.htwg.ptw.common.Direction.Direction
 import de.htwg.se.msiwar.util.IterationFunction._
 
 import scala.Option.empty
@@ -84,14 +85,14 @@ case class GameBoard(rows: Int, columns: Int, private val gameObjects: List[Game
 
   private def modifyPositionFunctionForDirection(direction: Direction): (Int, Int) => (Int, Int) = {
     direction match {
-      case RIGHT => incColumnIdx
-      case RIGHT_UP => decRowIdxIncColumnIdx
-      case RIGHT_DOWN => incRowIdxIncColumnIdx
-      case LEFT => decColumnIdx
-      case LEFT_UP => decRowIdxDecColumnIdx
-      case LEFT_DOWN => incRowIdxDecColumnIdx
-      case UP => decRowIdx
-      case DOWN => incRowIdx
+      case Direction.RIGHT => incColumnIdx
+      case Direction.RIGHT_UP => decRowIdxIncColumnIdx
+      case Direction.RIGHT_DOWN => incRowIdxIncColumnIdx
+      case Direction.LEFT => decColumnIdx
+      case Direction.LEFT_UP => decRowIdxDecColumnIdx
+      case Direction.LEFT_DOWN => incRowIdxDecColumnIdx
+      case Direction.UP => decRowIdx
+      case Direction.DOWN => incRowIdx
     }
   }
 
@@ -166,7 +167,7 @@ case class GameBoard(rows: Int, columns: Int, private val gameObjects: List[Game
       } else if (from.rowIdx > to.rowIdx) {
         Direction.RIGHT_UP
       } else {
-        RIGHT
+        Direction.RIGHT
       }
     } else {
       if (from.rowIdx < to.rowIdx) {

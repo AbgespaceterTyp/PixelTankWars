@@ -2,8 +2,6 @@ language: scala
 scala:
   - 2.11.8
 
-before_script: cd app
-  
 script:
   - sbt clean coverage test coverageReport
 

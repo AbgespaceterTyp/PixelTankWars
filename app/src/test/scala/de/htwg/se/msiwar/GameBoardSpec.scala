@@ -1,7 +1,7 @@
 package de.htwg.se.msiwar
 
+import de.htwg.ptw.common.{ActionType, Direction}
 import de.htwg.se.msiwar.model._
-import de.htwg.se.msiwar.util.Direction._
 import org.scalatest.{FlatSpec, Matchers}
 
 
@@ -10,49 +10,49 @@ class GameBoardSpec extends FlatSpec with Matchers {
   it should "return LEFT_UP for the given positions" in {
     val direction = GameBoard(10, 10, List()).calculateDirection(Position(1, 1), Position(0, 0))
 
-    direction should be(LEFT_UP)
+    direction should be(Direction.LEFT_UP)
   }
 
   it should "return LEFT_DOWN for the given positions" in {
     val direction = GameBoard(10, 10, List()).calculateDirection(Position(1, 1), Position(2, 0))
 
-    direction should be(LEFT_DOWN)
+    direction should be(Direction.LEFT_DOWN)
   }
 
   it should "return LEFT for the given positions" in {
     val direction = GameBoard(10, 10, List()).calculateDirection(Position(1, 1), Position(1, 0))
 
-    direction should be(LEFT)
+    direction should be(Direction.LEFT)
   }
 
   it should "return RIGHT for the given positions" in {
     val direction = GameBoard(10, 10, List()).calculateDirection(Position(1, 1), Position(1, 2))
 
-    direction should be(RIGHT)
+    direction should be(Direction.RIGHT)
   }
 
   it should "return RIGHT_UP for the given positions" in {
     val direction = GameBoard(10, 10, List()).calculateDirection(Position(1, 1), Position(0, 2))
 
-    direction should be(RIGHT_UP)
+    direction should be(Direction.RIGHT_UP)
   }
 
   it should "return RIGHT_DOWN for the given positions" in {
     val direction = GameBoard(10, 10, List()).calculateDirection(Position(1, 1), Position(2, 2))
 
-    direction should be(RIGHT_DOWN)
+    direction should be(Direction.RIGHT_DOWN)
   }
 
   it should "return DOWN for the given positions" in {
     val direction = GameBoard(10, 10, List()).calculateDirection(Position(1, 1), Position(2, 1))
 
-    direction should be(DOWN)
+    direction should be(Direction.DOWN)
   }
 
   it should "return UP for the given positions" in {
     val direction = GameBoard(10, 10, List()).calculateDirection(Position(1, 1), Position(0, 1))
 
-    direction should be(UP)
+    direction should be(Direction.UP)
   }
 
   it should "return a collision object when searching for it in the same column" in {

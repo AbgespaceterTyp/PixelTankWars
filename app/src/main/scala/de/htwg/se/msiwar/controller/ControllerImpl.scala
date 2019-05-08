@@ -2,9 +2,9 @@ package de.htwg.se.msiwar.controller
 
 import akka.actor.{Actor, ActorSystem, Props}
 import akka.routing.RoundRobinPool
+import de.htwg.ptw.common.Direction.Direction
 import de.htwg.se.msiwar.model._
-import de.htwg.se.msiwar.util.Direction.Direction
-import de.htwg.se.msiwar.util.{GameConfigProvider, GameConfigProviderImpl}
+import de.htwg.se.msiwar.util.GameConfigProvider
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -160,8 +160,9 @@ case class ControllerImpl(var model: GameModel) extends Controller {
   }
 
   override def startRandomGame(): Unit = {
-    val gameGenActor = system.actorOf(Props(new GameGenerationActor(this)))
-    gameGenActor ! Generate
+    // TODO use rest interface for generator and move code
+    //val gameGenActor = system.actorOf(Props(new GameGenerationActor(this)))
+    //gameGenActor ! Generate
   }
 
   override def startGame(gameConfigProviderOpt: Option[GameConfigProvider]): Unit = {
@@ -177,7 +178,8 @@ case class ControllerImpl(var model: GameModel) extends Controller {
   }
 }
 
-case class GameGenerationActor(controller: Controller) extends Actor {
+// TODO use rest interface for generator and move code
+/*case class GameGenerationActor(controller: Controller) extends Actor {
   private val workerRouter = context.actorOf(Props[GameGenerationWorker].withRouter(RoundRobinPool(10)), name = "workerRouter")
 
   def receive: PartialFunction[Any, Unit] = {
@@ -199,4 +201,4 @@ case class GameGenerationActor(controller: Controller) extends Actor {
         case None => controller.startGame(Option.empty)
       }
   }
-}
+}**/
