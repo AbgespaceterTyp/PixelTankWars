@@ -1,5 +1,8 @@
 package de.htwg.ptw.generator
 
+import de.htwg.ptw.common.Direction.Direction
+import de.htwg.ptw.common.{ActionType, Direction}
+import de.htwg.ptw.common.model._
 import de.htwg.ptw.generator.RandomImagePaths.blockImagePath
 import de.htwg.ptw.generator.util.Dijkstra
 
@@ -52,10 +55,10 @@ object RandomImagePaths {
 case class GameGenerator(rowCount: Int, columnCount: Int) {
 
   private var gameObjects = List[GameObject]()
-  private val moveAction = Action(id = 1, "Move", "images/action_move.png", "move.wav", actionPoints = 1, range = 1, MOVE, damage = 0)
-  private val shootAction = Action(id = 2, "Shoot", "images/action_attack.png", "shoot.wav", actionPoints = 1, range = 3, SHOOT, damage = 2)
-  private val waitAction = Action(id = 3, "Wait", "images/action_wait.png", "shoot.wav", actionPoints = 1, range = 1, WAIT, damage = 2)
-  private val rocketAction = Action(id = 4, "Shoot", "images/action_rocket_attack.png", "shoot.wav", actionPoints = 2, range = 5, SHOOT, damage = 3)
+  private val moveAction = Action(id = 1, "Move", "images/action_move.png", "move.wav", actionPoints = 1, range = 1, ActionType.MOVE, damage = 0)
+  private val shootAction = Action(id = 2, "Shoot", "images/action_attack.png", "shoot.wav", actionPoints = 1, range = 3, ActionType.SHOOT, damage = 2)
+  private val waitAction = Action(id = 3, "Wait", "images/action_wait.png", "shoot.wav", actionPoints = 1, range = 1, ActionType.WAIT, damage = 2)
+  private val rocketAction = Action(id = 4, "Shoot", "images/action_rocket_attack.png", "shoot.wav", actionPoints = 2, range = 5, ActionType.SHOOT, damage = 3)
   private val actions = List(moveAction, shootAction, waitAction)
 
   def generate(): Option[List[GameObject]] = {

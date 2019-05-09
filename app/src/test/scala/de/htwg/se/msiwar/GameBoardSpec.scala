@@ -1,7 +1,7 @@
 package de.htwg.se.msiwar
 
+import de.htwg.ptw.common.model._
 import de.htwg.ptw.common.{ActionType, Direction}
-import de.htwg.se.msiwar.model._
 import org.scalatest.{FlatSpec, Matchers}
 
 

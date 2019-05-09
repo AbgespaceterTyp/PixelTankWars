@@ -1,6 +1,7 @@
 package de.htwg.se.msiwar.model
 
 import de.htwg.ptw.common.Direction.Direction
+import de.htwg.ptw.common.model.GameObject
 import de.htwg.se.msiwar.util.GameConfigProvider
 
 import scala.concurrent.Future

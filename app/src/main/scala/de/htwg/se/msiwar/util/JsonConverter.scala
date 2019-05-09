@@ -1,10 +1,11 @@
 package de.htwg.se.msiwar.util
 
+import de.htwg.ptw.common.model.GameObject
 import de.htwg.se.msiwar.aview.MainApp.controller
-
 import de.htwg.se.msiwar.model._
-import scala.collection.mutable
 import play.api.libs.json._
+
+import scala.collection.mutable
 
 object JsonConverter {
 

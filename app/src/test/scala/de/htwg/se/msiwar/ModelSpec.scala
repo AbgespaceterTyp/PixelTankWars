@@ -1,6 +1,7 @@
 package de.htwg.se.msiwar
 
 import de.htwg.ptw.common.Direction
+import de.htwg.ptw.common.model.{Action, GameBoard}
 import de.htwg.se.msiwar.model._
 import org.scalatest.{FlatSpec, Matchers}
 

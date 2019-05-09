@@ -1,4 +1,4 @@
-package de.htwg.se.msiwar.model
+package de.htwg.ptw.common.model
 
 import de.htwg.ptw.common.ActionType.ActionType
 

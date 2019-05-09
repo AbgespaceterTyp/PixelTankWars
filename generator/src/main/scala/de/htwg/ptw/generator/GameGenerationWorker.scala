@@ -1,6 +1,7 @@
 package de.htwg.ptw.generator
 
 import akka.actor.Actor
+import de.htwg.ptw.common.model.GameObject
 
 import scala.util.{Failure, Success, Try}
 

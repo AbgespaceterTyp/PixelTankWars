@@ -1,6 +1,6 @@
 package de.htwg.se.msiwar.util
 
-import de.htwg.se.msiwar.model.GameObject
+import de.htwg.ptw.common.model.GameObject
 
 trait GameConfigProvider {
   def attackSoundPath: String

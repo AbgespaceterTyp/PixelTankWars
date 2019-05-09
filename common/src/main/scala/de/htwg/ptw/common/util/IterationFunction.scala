@@ -1,4 +1,4 @@
-package de.htwg.se.msiwar.util
+package de.htwg.ptw.common.util
 
 object IterationFunction {
   def incRowIdxIncColumnIdx(rowIdx: Int, columnIdx: Int): (Int, Int) = (rowIdx + 1, columnIdx + 1)

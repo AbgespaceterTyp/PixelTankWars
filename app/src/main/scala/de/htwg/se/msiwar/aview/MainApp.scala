@@ -1,5 +1,6 @@
 package de.htwg.se.msiwar.aview
 
+import de.htwg.ptw.common.model.{Action, GameBoard, GameObject}
 import de.htwg.se.msiwar.aview.swing.SwingFrame
 import de.htwg.se.msiwar.aview.tui.Tui
 import de.htwg.se.msiwar.controller.ControllerImpl

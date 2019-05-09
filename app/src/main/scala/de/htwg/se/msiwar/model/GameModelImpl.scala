@@ -1,8 +1,9 @@
 package de.htwg.se.msiwar.model
 
 import de.htwg.ptw.common.ActionType._
-import de.htwg.ptw.common.Direction
 import de.htwg.ptw.common.Direction.Direction
+import de.htwg.ptw.common.model._
+import de.htwg.ptw.common.{Direction, model}
 import de.htwg.se.msiwar.util.GameConfigProvider
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -12,7 +13,7 @@ import scala.swing.event.Event
 case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: GameBoard, lastExecutedAction: Option[Action], playerNumber: Int, turnNumber: Int) extends GameModel {
 
   override def init(gameConfigProvider: GameConfigProvider): GameModel = {
-    copy(gameConfigProvider, GameBoard(gameConfigProvider.rowCount, gameConfigProvider.colCount, gameConfigProvider.gameObjects), Option.empty[Action], 1, 1)
+    copy(gameConfigProvider, model.GameBoard(gameConfigProvider.rowCount, gameConfigProvider.colCount, gameConfigProvider.gameObjects), Option.empty[Action], 1, 1)
   }
 
   override def startGame(scenarioId: Int): Future[GameModel] = {
