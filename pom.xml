@@ -14,6 +14,8 @@
 	<properties>
 		<scala.version>2.12.6</scala.version>
 		<scala.compat.version>2.12</scala.compat.version>
+		<akka.version>2.5.19</akka.version>
+		<akka.http.version>10.1.8</akka.http.version>
 	</properties>
 
 	<modules>
@@ -86,30 +88,49 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>com.typesafe.play</groupId>
+			<artifactId>play-json_${scala.compat.version}</artifactId>
+			<version>2.7.2</version>
+		</dependency>
+		<!-- Akka -->
+		<dependency>
 			<groupId>com.typesafe.akka</groupId>
 			<artifactId>akka-actor_${scala.compat.version}</artifactId>
-			<version>2.5.8</version>
+			<version>${akka.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
 			<artifactId>akka-testkit_${scala.compat.version}</artifactId>
-			<version>2.5.9</version>
+			<version>${akka.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
-			<artifactId>akka-http_${scala.compat.version}</artifactId>
-			<version>10.1.8</version>
+			<artifactId>akka-stream-testkit_${scala.compat.version}</artifactId>
+			<version>${akka.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
 			<artifactId>akka-stream_${scala.compat.version}</artifactId>
-			<version>2.5.19</version>
+			<version>${akka.version}</version>
+		</dependency>
+		<!-- Akka HTTP -->
+		<dependency>
+			<groupId>com.typesafe.akka</groupId>
+			<artifactId>akka-http_${scala.compat.version}</artifactId>
+			<version>${akka.http.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.typesafe.play</groupId>
-			<artifactId>play-json_${scala.compat.version}</artifactId>
-			<version>2.7.2</version>
+			<groupId>com.typesafe.akka</groupId>
+			<artifactId>akka-http-spray-json_${scala.compat.version}</artifactId>
+			<version>${akka.http.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.typesafe.akka</groupId>
+			<artifactId>akka-http-testkit_${scala.compat.version}</artifactId>
+			<version>${akka.http.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>
