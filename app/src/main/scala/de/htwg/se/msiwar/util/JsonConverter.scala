@@ -1,6 +1,6 @@
 package de.htwg.se.msiwar.util
 
-import de.htwg.ptw.common.model.GameObject
+import de.htwg.ptw.common.model.{GameObject, Position}
 import de.htwg.ptw.common.util.GameConfigProviderImpl
 import de.htwg.se.msiwar.aview.MainApp.controller
 import de.htwg.se.msiwar.model._
@@ -23,12 +23,34 @@ object JsonConverter {
     }
   }
 
+  implicit def positionReader = new Reads[Position] {
+    override def reads(json: JsValue): JsResult[Position] = ???
+  }
+
+  implicit def position = new Writes[Position] {
+    override def writes(position: Position): JsValue = Json.obj(
+      "rowIdx" -> position.rowIdx,
+      "columnIdx" -> position.columnIdx
+    )
+  }
+
   implicit def gameObject = new Writes[GameObject] {
     def writes(playerObject: GameObject) = Json.obj(
-      "rowIdx" -> playerObject.position.rowIdx,
-      "columnIdx" -> playerObject.position.columnIdx,
+      "name" -> playerObject.name,
       "imagePath" -> playerObject.imagePath,
+      "position" -> position.writes(playerObject.position)
     )
+  }
+
+  implicit def gameObjectReader = new Reads[GameObject] {
+    override def reads(json: JsValue): JsResult[GameObject] = {
+      JsSuccess(
+        new GameObject(
+          (json \ "name").as[String],
+          (json \ "imagePath").as[String],
+          (json \ "position").as[Position])
+      )
+    }
   }
 
   implicit def gameObjects = new Writes[List[GameObject]] {
@@ -37,10 +59,45 @@ object JsonConverter {
     }
   }
 
+  implicit def gameObjectsReader = new Reads[List[GameObject]] {
+    override def reads(json: JsValue): JsResult[List[GameObject]] = {
+      JsSuccess(
+        // TODO read list
+        List[GameObject]()
+      )
+    }
+  }
+
   implicit def gameConfigProvider = new Writes[GameConfigProviderImpl] {
     def writes(config: GameConfigProviderImpl) = Json.obj(
-
+      "gameObjects" -> gameObjects.writes(config.gameObjects),
+      "attackSoundPath" -> config.attackSoundPath,
+      "openingBackgroundImagePath" -> config.openingBackgroundImagePath,
+      "levelBackgroundImagePath" -> config.levelBackgroundImagePath,
+      "actionbarBackgroundImagePath" -> config.actionbarBackgroundImagePath,
+      "attackImagePath" -> config.attackImagePath,
+      "appIconImagePath" -> config.appIconImagePath,
+      "rowCount" -> config.rowCount,
+      "colCount" -> config.colCount
     )
+  }
+
+  implicit def gameConfigProviderReader = new Reads[GameConfigProviderImpl] {
+    override def reads(json: JsValue): JsResult[GameConfigProviderImpl] = {
+      JsSuccess(
+        GameConfigProviderImpl(
+          (json \ "gameObjects").as[List[GameObject]],
+          (json \ "attackSoundPath").as[String],
+          (json \ "openingBackgroundImagePath").as[String],
+          (json \ "levelBackgroundImagePath").as[String],
+          (json \ "actionbarBackgroundImagePath").as[String],
+          (json \ "attackImagePath").as[String],
+          (json \ "appIconImagePath").as[String],
+          (json \ "rowCount").as[Int],
+          (json \ "colCount").as[Int]
+        )
+      )
+    }
   }
 
   implicit def playerWon = new Writes[PlayerWon] {

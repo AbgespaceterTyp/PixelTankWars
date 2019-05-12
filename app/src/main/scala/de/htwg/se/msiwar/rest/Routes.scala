@@ -1,12 +1,21 @@
 package de.htwg.se.msiwar.rest
 
-import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.model.HttpEntity
+import akka.http.scaladsl.server.Directives.{entity, _}
+import akka.http.scaladsl.unmarshalling.Unmarshaller
+import de.htwg.ptw.common.util.GameConfigProviderImpl
 import de.htwg.se.msiwar.aview.MainApp
 import de.htwg.se.msiwar.util.JsonConverter
+import play.api.libs.json.Json
 
 import scala.util.{Failure, Success}
 
 object Routes {
+  implicit val um:Unmarshaller[HttpEntity, GameConfigProviderImpl] = {
+    Unmarshaller.byteStringUnmarshaller.mapWithCharset { (data, charset) =>
+      JsonConverter.gameConfigProviderReader.reads(Json.parse(data.toArray)).get
+    }
+  }
 
   val all =
     get {

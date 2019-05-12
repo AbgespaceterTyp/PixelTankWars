@@ -35,7 +35,9 @@ object JsonConverter {
       "levelBackgroundImagePath" -> config.levelBackgroundImagePath,
       "actionbarBackgroundImagePath" -> config.actionbarBackgroundImagePath,
       "attackImagePath" -> config.attackImagePath,
-      "appIconImagePath" -> config.appIconImagePath
+      "appIconImagePath" -> config.appIconImagePath,
+      "rowCount" -> config.rowCount,
+      "colCount" -> config.colCount
     )
   }
 }
