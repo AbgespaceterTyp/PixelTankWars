@@ -3,6 +3,7 @@ package de.htwg.se.msiwar.controller
 import akka.actor.ActorSystem
 import de.htwg.ptw.common.Direction.Direction
 import de.htwg.ptw.common.model.GameObject
+import de.htwg.ptw.common.util.GameConfigProvider
 import de.htwg.se.msiwar.model._
 import de.htwg.se.msiwar.util.GameConfigProvider
 
@@ -12,8 +13,6 @@ import scala.swing.event.Event
 import scala.util.{Failure, Success}
 
 case class ControllerImpl(var model: GameModel) extends Controller {
-
-  private val system = ActorSystem("GameGenerationSystem")
 
   override def cellContentToText(rowIndex: Int, columnIndex: Int): String = {
     model.cellContentToText(rowIndex, columnIndex)
@@ -160,9 +159,7 @@ case class ControllerImpl(var model: GameModel) extends Controller {
   }
 
   override def startRandomGame(): Unit = {
-    // TODO use rest interface for generator and move code
-    //val gameGenActor = system.actorOf(Props(new GameGenerationActor(this)))
-    //gameGenActor ! Generate
+    // TODO use rest interface and trigger generator
   }
 
   override def startGame(gameConfigProviderOpt: Option[GameConfigProvider]): Unit = {
@@ -177,28 +174,3 @@ case class ControllerImpl(var model: GameModel) extends Controller {
     }
   }
 }
-
-// TODO use rest interface for generator and move code
-/*case class GameGenerationActor(controller: Controller) extends Actor {
-  private val workerRouter = context.actorOf(Props[GameGenerationWorker].withRouter(RoundRobinPool(10)), name = "workerRouter")
-
-  def receive: PartialFunction[Any, Unit] = {
-    case Generate =>
-      for (_ <- 0 until 10) {
-        workerRouter ! Work(Random.nextInt(10) + 2, Random.nextInt(20) + 2)
-      }
-    case Result(gameObjectsOpt, genRowCount, genColCount) =>
-      gameObjectsOpt match {
-        case Some(gameObjects) => {
-          context.stop(self)
-
-          val newGameConfigProvider = GameConfigProviderImpl(gameObjects, "sounds/explosion.wav", "images/background_opening.png",
-            "images/background_woodlands.png", "images/background_actionbar.png", "images/hit.png",
-            "images/app_icon.png", genRowCount, genColCount)
-
-          controller.startGame(Option(newGameConfigProvider))
-        }
-        case None => controller.startGame(Option.empty)
-      }
-  }
-}**/

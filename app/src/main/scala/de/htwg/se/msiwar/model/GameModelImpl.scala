@@ -3,8 +3,8 @@ package de.htwg.se.msiwar.model
 import de.htwg.ptw.common.ActionType._
 import de.htwg.ptw.common.Direction.Direction
 import de.htwg.ptw.common.model._
+import de.htwg.ptw.common.util.GameConfigProvider
 import de.htwg.ptw.common.{Direction, model}
-import de.htwg.se.msiwar.util.GameConfigProvider
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

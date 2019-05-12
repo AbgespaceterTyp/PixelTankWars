@@ -3,8 +3,8 @@ package de.htwg.se.msiwar
 import java.io.FileNotFoundException
 
 import de.htwg.ptw.common.model._
+import de.htwg.ptw.common.util.GameConfigProvider
 import de.htwg.ptw.common.{ActionType, Direction}
-import de.htwg.se.msiwar.util.GameConfigProvider
 
 class TestConfigProvider extends GameConfigProvider {
   private var actions:List[Action] = List[Action]()

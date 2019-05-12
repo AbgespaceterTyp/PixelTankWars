@@ -2,8 +2,8 @@ package de.htwg.se.msiwar.controller
 
 import de.htwg.ptw.common.Direction.Direction
 import de.htwg.ptw.common.model.GameObject
+import de.htwg.ptw.common.util.GameConfigProvider
 import de.htwg.se.msiwar.model.GameModel
-import de.htwg.se.msiwar.util.GameConfigProvider
 
 import scala.concurrent.Future
 import scala.swing.Publisher
