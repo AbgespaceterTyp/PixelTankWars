@@ -47,33 +47,26 @@ class GameGenerationActor() extends Actor {
             "images/app_icon.png", genRowCount, genColCount)
 
           val data = JsonConverter.gameConfigProvider.writes(newGameConfigProvider).toString()
-          print("sending data: " + data)
-          val request = HttpRequest(
-            PUT,
-            uri = "http://localhost:8080/start",
-            entity = HttpEntity(`application/json`, data))
-          val responseFuture: Future[HttpResponse] = Http().singleRequest(request)
-
-          responseFuture
-            .onComplete {
-              case Success(res) => println(res)
-              case Failure(restError) => sys.error("Failed to send game configuration: " + restError)
-            }
+          sendJson(data)
         }
         case None => {
           // Send empty result when no valid game configuration has been generated
-          val request = HttpRequest(
-            PUT,
-            uri = "http://localhost:8080/start",
-            entity = HttpEntity(`application/json`, ""))
-          val responseFuture: Future[HttpResponse] = Http().singleRequest(request)
-
-          responseFuture
-            .onComplete {
-              case Success(res) => println(res)
-              case Failure(restError) => sys.error("Failed to send empty game configuration: " + restError)
-            }
+          sendJson("")
         }
+      }
+  }
+
+  def sendJson(data: String): Unit = {
+    val request = HttpRequest(
+      PUT,
+      uri = "http://localhost:8080/start",
+      entity = HttpEntity(`application/json`, data))
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(request)
+
+    responseFuture
+      .onComplete {
+        case Success(res) => println(res)
+        case Failure(restError) => sys.error("Failed to send game configuration: " + restError)
       }
   }
 }
