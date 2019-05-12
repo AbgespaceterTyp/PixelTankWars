@@ -78,6 +78,13 @@ object Routes {
         }
     } ~
       put {
+        path("start") {
+          entity(as[GameConfigProviderImpl]) {  (config)  =>
+            complete {
+              "" + MainApp.controller.startGame(Option(config))
+            }
+          }
+        } ~
         pathPrefix("actions") {
           path("execute" / IntNumber / IntNumber / IntNumber) { (actionId, rowIndex, columnIndex) =>
             onComplete(MainApp.controller.executeAction(actionId, rowIndex, columnIndex)) {
