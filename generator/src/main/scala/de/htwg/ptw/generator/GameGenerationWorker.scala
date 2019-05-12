@@ -7,7 +7,7 @@ import scala.util.{Failure, Success, Try}
 
 sealed trait GenerationMessage
 
-case object Generate extends GenerationMessage
+case class Generate(rowCount: Int, columnCount: Int) extends GenerationMessage
 
 case class Work(rowCount: Int, columnCount: Int) extends GenerationMessage
 

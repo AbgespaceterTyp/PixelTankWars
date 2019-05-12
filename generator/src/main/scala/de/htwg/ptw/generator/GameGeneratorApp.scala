@@ -4,14 +4,12 @@ import akka.actor.{Actor, ActorSystem, Props}
 import akka.routing.RoundRobinPool
 import de.htwg.ptw.common.util.GameConfigProviderImpl
 
-import scala.util.Random
-
 class GameGeneratorApp() {
   private val system = ActorSystem("GameGenerationSystem")
 
   def generate(rowCount : Int, colCount : Int): Unit = {
     val gameGenActor = system.actorOf(Props(new GameGenerationActor()))
-    gameGenActor ! Generate
+    gameGenActor ! Generate(rowCount, colCount)
   }
 }
 
@@ -19,9 +17,9 @@ class GameGenerationActor() extends Actor {
   private val workerRouter = context.actorOf(Props[GameGenerationWorker].withRouter(RoundRobinPool(10)), name = "workerRouter")
 
   def receive: PartialFunction[Any, Unit] = {
-    case Generate =>
+    case Generate(rowCount : Int, colCount : Int) =>
       for (_ <- 0 until 10) {
-        workerRouter ! Work(Random.nextInt(10) + 2, Random.nextInt(20) + 2)
+        workerRouter ! Work(rowCount, colCount)
       }
     case Result(gameObjectsOpt, genRowCount, genColCount) =>
       gameObjectsOpt match {
