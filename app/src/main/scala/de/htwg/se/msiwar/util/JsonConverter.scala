@@ -1,6 +1,7 @@
 package de.htwg.se.msiwar.util
 
 import de.htwg.ptw.common.model.GameObject
+import de.htwg.ptw.common.util.GameConfigProviderImpl
 import de.htwg.se.msiwar.aview.MainApp.controller
 import de.htwg.se.msiwar.model._
 import play.api.libs.json._
@@ -16,17 +17,13 @@ object JsonConverter {
     )
   }
 
-
   implicit def tuples = new Writes[List[(Int, Int)]] {
-
     override def writes(o: List[(Int, Int)]): JsValue = {
       JsArray(o.map(Json.toJson(_)))
     }
   }
 
-
   implicit def gameObject = new Writes[GameObject] {
-
     def writes(playerObject: GameObject) = Json.obj(
       "rowIdx" -> playerObject.position.rowIdx,
       "columnIdx" -> playerObject.position.columnIdx,
@@ -34,17 +31,19 @@ object JsonConverter {
     )
   }
 
-
   implicit def gameObjects = new Writes[List[GameObject]] {
-
     def writes(o: List[GameObject]): JsValue = {
       JsArray(o.map(Json.toJson(_)))
     }
   }
 
+  implicit def gameConfigProvider = new Writes[GameConfigProviderImpl] {
+    def writes(config: GameConfigProviderImpl) = Json.obj(
+
+    )
+  }
 
   implicit def playerWon = new Writes[PlayerWon] {
-
     override def writes(playerWonEvent: PlayerWon): JsValue = {
       Json.obj(
         "eventType" -> PlayerWon.getClass.getSimpleName,
@@ -54,9 +53,7 @@ object JsonConverter {
     }
   }
 
-
   implicit def turnStarted = new Writes[TurnStarted] {
-
     override def writes(turnStartedEvent: TurnStarted): JsValue = {
       Json.obj(
         "eventType" -> TurnStarted.getClass.getSimpleName,
@@ -69,9 +66,7 @@ object JsonConverter {
     }
   }
 
-
   implicit def attackResult = new Writes[AttackResult] {
-
     override def writes(attackResultEvent: AttackResult): JsValue = {
       Json.obj(
         "eventType" -> AttackResult.getClass.getSimpleName,
@@ -85,27 +80,19 @@ object JsonConverter {
   }
 
   def playerWonToJson(playerWonEvent: PlayerWon): JsValue = {
-
     playerWon.writes(playerWonEvent)
-
   }
 
   def turnStartedToJson(turnStartedEvent: TurnStarted): JsValue = {
-
     turnStarted.writes(turnStartedEvent)
-
   }
 
   def attackResultToJson(attackResultEvent: AttackResult): JsValue = {
-
     attackResult.writes(attackResultEvent)
-
   }
 
   def gameBoardToJson(): JsValue = {
-
     val list = mutable.MutableList[GameObject]()
-
     for (row <- 0 until controller.rowCount) {
       for (col <- 0 until controller.columnCount) {
         val gameObjectOpt = controller.cellContent(row, col)

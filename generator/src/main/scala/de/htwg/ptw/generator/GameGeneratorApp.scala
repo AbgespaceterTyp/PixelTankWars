@@ -2,15 +2,15 @@ package de.htwg.ptw.generator
 
 import akka.actor.{Actor, ActorSystem, Props}
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model.HttpMethods._
 import akka.http.scaladsl.model.MediaTypes._
 import akka.http.scaladsl.model.{HttpEntity, HttpRequest, HttpResponse}
 import akka.routing.RoundRobinPool
 import akka.stream.ActorMaterializer
 import de.htwg.ptw.common.util.GameConfigProviderImpl
+import de.htwg.ptw.generator.util.JsonConverter
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 class GameGeneratorApp() {
@@ -46,21 +46,34 @@ class GameGenerationActor() extends Actor {
             "images/background_woodlands.png", "images/background_actionbar.png", "images/hit.png",
             "images/app_icon.png", genRowCount, genColCount)
 
+          val data = JsonConverter.gameConfigProvider.writes(newGameConfigProvider).toString()
+          print("sending data: " + data)
           val request = HttpRequest(
             PUT,
             uri = "http://localhost:8080/start",
-            entity = HttpEntity(`application/json`, Marshal(newGameConfigProvider).toString))
+            entity = HttpEntity(`application/json`, data))
           val responseFuture: Future[HttpResponse] = Http().singleRequest(request)
 
           responseFuture
             .onComplete {
               case Success(res) => println(res)
-              case Failure(restError) => sys.error("Failed to start random game: " + restError)
+              case Failure(restError) => sys.error("Failed to send game configuration: " + restError)
             }
-          //controller.startGame(Option(newGameConfigProvider))
         }
-        case None => // TODO do rest call with empty game config
-        //controller.startGame(Option.empty)
+        case None => {
+          // Send empty result when no valid game configuration has been generated
+          val request = HttpRequest(
+            PUT,
+            uri = "http://localhost:8080/start",
+            entity = HttpEntity(`application/json`, ""))
+          val responseFuture: Future[HttpResponse] = Http().singleRequest(request)
+
+          responseFuture
+            .onComplete {
+              case Success(res) => println(res)
+              case Failure(restError) => sys.error("Failed to send empty game configuration: " + restError)
+            }
+        }
       }
   }
 }
