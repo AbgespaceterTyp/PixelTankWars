@@ -8,8 +8,6 @@ import de.htwg.ptw.common.Direction.Direction
 import de.htwg.ptw.common.model.GameObject
 import de.htwg.ptw.common.util.GameConfigProvider
 import de.htwg.se.msiwar.model._
-
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.swing.event.Event
 import scala.util.{Failure, Random, Success}
@@ -173,7 +171,7 @@ case class ControllerImpl(var model: GameModel) extends Controller {
     responseFuture
       .onComplete {
         case Success(res) => println(res)
-        case Failure(restError)   => sys.error("something wrong" + restError)
+        case Failure(restError)   => sys.error("Failed to start random game: " + restError)
       }
   }
 
