@@ -1,4 +1,4 @@
-package de.htwg.se.msiwar.util
+package de.htwg.ptw.common.util
 
 import java.io.File
 import java.nio.file.{FileSystems, Files, Path, Paths}

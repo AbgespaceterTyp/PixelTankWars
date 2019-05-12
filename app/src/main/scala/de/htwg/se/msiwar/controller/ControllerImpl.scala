@@ -1,11 +1,9 @@
 package de.htwg.se.msiwar.controller
 
-import akka.actor.ActorSystem
 import de.htwg.ptw.common.Direction.Direction
 import de.htwg.ptw.common.model.GameObject
 import de.htwg.ptw.common.util.GameConfigProvider
 import de.htwg.se.msiwar.model._
-import de.htwg.se.msiwar.util.GameConfigProvider
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
