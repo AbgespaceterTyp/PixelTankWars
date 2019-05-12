@@ -1,16 +1,23 @@
 package de.htwg.ptw.generator.util
 
-import de.htwg.ptw.common.model.GameObject
+import de.htwg.ptw.common.model.{GameObject, Position}
 import de.htwg.ptw.common.util.GameConfigProviderImpl
 import play.api.libs.json._
 
 object JsonConverter {
 
+  implicit def position = new Writes[Position] {
+    override def writes(position: Position): JsValue = Json.obj(
+      "rowIdx" -> position.rowIdx,
+      "columnIdx" -> position.columnIdx
+    )
+  }
+
   implicit def gameObject = new Writes[GameObject] {
     def writes(playerObject: GameObject) = Json.obj(
-      "rowIdx" -> playerObject.position.rowIdx,
-      "columnIdx" -> playerObject.position.columnIdx,
+      "name" -> playerObject.name,
       "imagePath" -> playerObject.imagePath,
+      "position" -> position.writes(playerObject.position)
     )
   }
 
@@ -28,9 +35,7 @@ object JsonConverter {
       "levelBackgroundImagePath" -> config.levelBackgroundImagePath,
       "actionbarBackgroundImagePath" -> config.actionbarBackgroundImagePath,
       "attackImagePath" -> config.attackImagePath,
-      "appIconImagePath" -> config.appIconImagePath,
-      "rowCount" -> config.rowCount,
-      "colCount" -> config.colCount
+      "appIconImagePath" -> config.appIconImagePath
     )
   }
 }
