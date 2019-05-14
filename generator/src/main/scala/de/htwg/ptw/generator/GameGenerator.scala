@@ -184,5 +184,4 @@ case class GameGenerator(rowCount: Int, columnCount: Int) {
     }
     lookup
   }
-
 }

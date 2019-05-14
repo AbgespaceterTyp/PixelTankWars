@@ -11,7 +11,7 @@ case class Generate(rowCount: Int, columnCount: Int) extends GenerationMessage
 
 case class Work(rowCount: Int, columnCount: Int) extends GenerationMessage
 
-case class Result(gameObjectsOpt: Option[List[GameObject]], rowCount: Int, colCount: Int) extends GenerationMessage
+case class Result(gameObjectsOpt: Option[List[GameObject]], rowCount: Int, colCount: Int, backgroundPath: String) extends GenerationMessage
 
 class GameGenerationWorker extends Actor {
 
@@ -24,6 +24,6 @@ class GameGenerationWorker extends Actor {
 
   def receive: PartialFunction[Any, Unit] = {
     case Work(rowCount: Int, columnCount: Int) =>
-      sender ! Result(generate(rowCount, columnCount), rowCount, columnCount)
+      sender ! Result(generate(rowCount, columnCount), rowCount, columnCount, RandomImagePaths.backgroundImagePath())
   }
 }

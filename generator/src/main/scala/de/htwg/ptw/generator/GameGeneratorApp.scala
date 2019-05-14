@@ -32,13 +32,13 @@ class GameGenerationActor(implicit system: ActorSystem, implicit val mat: Materi
       for (_ <- 0 until 10) {
         workerRouter ! Work(rowCount, colCount)
       }
-    case Result(gameObjectsOpt, genRowCount, genColCount) =>
+    case Result(gameObjectsOpt, genRowCount, genColCount, backgroundPath) =>
       gameObjectsOpt match {
         case Some(gameObjects) => {
           context.stop(self)
 
           val newGameConfigProvider = GameConfigProviderImpl(gameObjects, "sounds/explosion.wav", "images/background_opening.png",
-            "images/background_woodlands.png", "images/background_actionbar.png", "images/hit.png",
+            backgroundPath, "images/background_actionbar.png", "images/hit.png",
             "images/app_icon.png", genRowCount, genColCount)
 
           val data = jsonConverter.gameConfigProviderWriter.writes(newGameConfigProvider).toString()
