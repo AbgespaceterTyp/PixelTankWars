@@ -6,10 +6,10 @@ import akka.http.scaladsl.model.HttpMethods._
 import akka.http.scaladsl.model.MediaTypes._
 import akka.http.scaladsl.model.{HttpEntity, HttpRequest, HttpResponse}
 import akka.routing.RoundRobinPool
-import akka.stream.ActorMaterializer
+import akka.stream.{ActorMaterializer, Materializer}
 import de.htwg.ptw.common.util.{BaseJsonConverter, GameConfigProviderImpl}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success}
 
 class GameGeneratorApp() {
@@ -24,14 +24,9 @@ class GameGeneratorApp() {
   }
 }
 
-class GameGenerationActor() extends Actor {
+class GameGenerationActor(implicit system: ActorSystem, implicit val mat: Materializer, implicit val actorContext: ExecutionContextExecutor) extends Actor {
   private val workerRouter = context.actorOf(Props[GameGenerationWorker].withRouter(RoundRobinPool(10)), name = "workerRouter")
   private val jsonConverter = new BaseJsonConverter
-
-  implicit val system = ActorSystem()
-  implicit val materializer = ActorMaterializer()
-  // needed for the future flatMap/onComplete in the end
-  implicit val executionContext = system.dispatcher
 
   def receive: PartialFunction[Any, Unit] = {
     case Generate(rowCount: Int, colCount: Int) =>
