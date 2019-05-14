@@ -45,11 +45,7 @@ class GameGenerationActor(implicit system: ActorSystem, implicit val mat: Materi
           println("Sending data: " + data)
           sendJson(data)
         }
-        case None => {
-          // Send empty result when no valid game configuration has been generated
-          println("No valid configuration has been generated, sending empty data")
-          sendJson("")
-        }
+        case None => println("No valid configuration has been generated")
       }
   }
 
