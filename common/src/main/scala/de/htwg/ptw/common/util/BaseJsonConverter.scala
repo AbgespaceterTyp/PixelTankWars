@@ -1,8 +1,9 @@
 package de.htwg.ptw.common.util
 
-import de.htwg.ptw.common.Direction
+import de.htwg.ptw.common.ActionType.ActionType
 import de.htwg.ptw.common.Direction.Direction
 import de.htwg.ptw.common.model._
+import de.htwg.ptw.common.{ActionType, Direction}
 import play.api.libs.json._
 
 class BaseJsonConverter {
@@ -54,6 +55,68 @@ class BaseJsonConverter {
     }
   }
 
+  implicit def actionTypeWriter = new Writes[ActionType] {
+    override def writes(actionType: ActionType): JsValue = Json.obj(
+      "value" -> actionType.toString
+    )
+  }
+
+  implicit def actionTypeReader = new Reads[ActionType] {
+    override def reads(json: JsValue): JsResult[ActionType] = {
+      JsSuccess(
+        ActionType.withName(
+          (json \ "value").as[String]
+        )
+      )
+    }
+  }
+
+  implicit def actionWriter = new Writes[Action] {
+    def writes(action: Action) = Json.obj(
+      "action" -> Json.obj(
+        "id" -> action.id,
+        "description" -> action.description,
+        "imagePath" -> action.imagePath,
+        "soundPath" -> action.soundPath,
+        "actionPoints" -> action.actionPoints,
+        "range" -> action.range,
+        "actionType" -> action.actionType,
+        "damage" -> action.damage
+      )
+    )
+  }
+
+  implicit def actionReader = new Reads[Action] {
+    override def reads(json: JsValue): JsResult[Action] = {
+      JsSuccess(
+        Action(
+          (json \ "id").as[Int],
+          (json \ "description").as[String],
+          (json \ "imagePath").as[String],
+          (json \ "soundPath").as[String],
+          (json \ "actionPoints").as[Int],
+          (json \ "range").as[Int],
+          (json \ "actionType").as[ActionType],
+          (json \ "damage").as[Int]
+        )
+      )
+    }
+  }
+
+  implicit def actionsWriter = new Writes[List[Action]] {
+    def writes(actions: List[Action]): JsValue = {
+      JsArray(actions.map(Json.toJson(_)))
+    }
+  }
+
+  implicit def actionsReader = new Reads[List[Action]] {
+    override def reads(json: JsValue): JsResult[List[Action]] = {
+      JsSuccess(
+        (json \\ "action").map(_.as[Action]).toList
+      )
+    }
+  }
+
   implicit def gameObject = new Writes[GameObject] {
     def writes(gameObject: GameObject) = {
       writeGameObjectByType(gameObject)
@@ -75,7 +138,7 @@ class BaseJsonConverter {
             "maxActionPoints" -> player.maxActionPoints,
             "healthPoints" -> player.healthPoints,
             "maxHealthPoints" -> player.maxHealthPoints,
-            //actions: List[Action] // TODO create reader/writer for it
+            "actions" -> actionsWriter.writes(player.actions)
           ))
       }
       case block: BlockObject => {
@@ -122,7 +185,7 @@ class BaseJsonConverter {
           (json \ "maxActionPoints").as[Int],
           (json \ "healthPoints").as[Int],
           (json \ "maxHealthPoints").as[Int],
-          List[Action]() // TODO create reader/writer for it
+          (json \ "actions").as[List[Action]]
         ))
     }
   }
@@ -161,7 +224,6 @@ class BaseJsonConverter {
       JsSuccess(
         GameConfigProviderImpl(
           (json \ "gameObjects").as[List[GameObject]],
-          //(json \ "gameObjects" \\ "gameObject").map(_.as[GameObject]).toList,
           (json \ "attackSoundPath").as[String],
           (json \ "openingBackgroundImagePath").as[String],
           (json \ "levelBackgroundImagePath").as[String],
