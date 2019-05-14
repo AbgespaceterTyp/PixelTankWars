@@ -1,6 +1,7 @@
 package de.htwg.ptw.common.util
 
 import de.htwg.ptw.common.Direction
+import de.htwg.ptw.common.Direction.Direction
 import de.htwg.ptw.common.model._
 import play.api.libs.json._
 
@@ -19,12 +20,17 @@ class BaseJsonConverter {
     }
   }
 
-  implicit def positionReader = new Reads[Position] {
-    override def reads(json: JsValue): JsResult[Position] = {
+  implicit def direction = new Writes[Direction] {
+    override def writes(direction: Direction): JsValue = Json.obj(
+      "value" -> direction.toString
+    )
+  }
+
+  implicit def directionReader = new Reads[Direction] {
+    override def reads(json: JsValue): JsResult[Direction] = {
       JsSuccess(
-        Position(
-          (json \ "rowIdx").as[Int],
-          (json \ "columnIdx").as[Int]
+        Direction.withName(
+          (json \ "value").as[String]
         )
       )
     }
@@ -35,6 +41,17 @@ class BaseJsonConverter {
       "rowIdx" -> position.rowIdx,
       "columnIdx" -> position.columnIdx
     )
+  }
+
+  implicit def positionReader = new Reads[Position] {
+    override def reads(json: JsValue): JsResult[Position] = {
+      JsSuccess(
+        Position(
+          (json \ "rowIdx").as[Int],
+          (json \ "columnIdx").as[Int]
+        )
+      )
+    }
   }
 
   implicit def gameObject = new Writes[GameObject] {
@@ -51,7 +68,7 @@ class BaseJsonConverter {
             "name" -> player.name,
             "imagePath" -> player.imagePath,
             "position" -> position.writes(player.position),
-            "viewDirection" -> Direction.DOWN.toString, // TODO create reader/writer for it
+            "viewDirection" -> direction.writes(player.viewDirection),
             "playerNumber" -> player.playerNumber,
             "wonImagePath" -> player.wonImagePath,
             "actionPoints" -> player.actionPoints,
@@ -98,7 +115,7 @@ class BaseJsonConverter {
           (json \ "name").as[String],
           (json \ "imagePath").as[String],
           (json \ "position").as[Position],
-          Direction.DOWN, // TODO create reader/writer for it
+          (json \ "viewDirection").as[Direction],
           (json \ "playerNumber").as[Int],
           (json \ "wonImagePath").as[String],
           (json \ "actionPoints").as[Int],
