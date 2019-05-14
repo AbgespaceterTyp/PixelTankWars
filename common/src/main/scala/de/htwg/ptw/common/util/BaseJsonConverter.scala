@@ -8,20 +8,20 @@ import play.api.libs.json._
 
 class BaseJsonConverter {
 
-  implicit def tuple = new Writes[(Int, Int)] {
+  implicit def tupleWriter = new Writes[(Int, Int)] {
     override def writes(o: (Int, Int)) = Json.obj(
       "rowIdx" -> o._1,
       "columnIdx" -> o._2,
     )
   }
 
-  implicit def tuples = new Writes[List[(Int, Int)]] {
+  implicit def tuplesWriter = new Writes[List[(Int, Int)]] {
     override def writes(o: List[(Int, Int)]): JsValue = {
       JsArray(o.map(Json.toJson(_)))
     }
   }
 
-  implicit def direction = new Writes[Direction] {
+  implicit def directionWriter = new Writes[Direction] {
     override def writes(direction: Direction): JsValue = Json.obj(
       "value" -> direction.toString
     )
@@ -37,7 +37,7 @@ class BaseJsonConverter {
     }
   }
 
-  implicit def position = new Writes[Position] {
+  implicit def positionWriter = new Writes[Position] {
     override def writes(position: Position): JsValue = Json.obj(
       "rowIdx" -> position.rowIdx,
       "columnIdx" -> position.columnIdx
@@ -117,7 +117,7 @@ class BaseJsonConverter {
     }
   }
 
-  implicit def gameObject = new Writes[GameObject] {
+  implicit def gameObjectWriter = new Writes[GameObject] {
     def writes(gameObject: GameObject) = {
       writeGameObjectByType(gameObject)
     }
@@ -130,8 +130,8 @@ class BaseJsonConverter {
           "playerObject" -> Json.obj(
             "name" -> player.name,
             "imagePath" -> player.imagePath,
-            "position" -> position.writes(player.position),
-            "viewDirection" -> direction.writes(player.viewDirection),
+            "position" -> positionWriter.writes(player.position),
+            "viewDirection" -> directionWriter.writes(player.viewDirection),
             "playerNumber" -> player.playerNumber,
             "wonImagePath" -> player.wonImagePath,
             "actionPoints" -> player.actionPoints,
@@ -146,7 +146,7 @@ class BaseJsonConverter {
           "blockObject" -> Json.obj(
             "name" -> block.name,
             "imagePath" -> block.imagePath,
-            "position" -> position.writes(block.position)
+            "position" -> positionWriter.writes(block.position)
           ))
       }
       case gameObj: GameObject => {
@@ -154,7 +154,7 @@ class BaseJsonConverter {
           "gameObject" -> Json.obj(
             "name" -> gameObj.name,
             "imagePath" -> gameObj.imagePath,
-            "position" -> position.writes(gameObj.position)
+            "position" -> positionWriter.writes(gameObj.position)
           ))
       }
     }
@@ -190,7 +190,7 @@ class BaseJsonConverter {
     }
   }
 
-  implicit def gameObjects = new Writes[List[GameObject]] {
+  implicit def gameObjectsWriter = new Writes[List[GameObject]] {
     def writes(o: List[GameObject]): JsValue = {
       JsArray(o.map(Json.toJson(_)))
     }
@@ -205,9 +205,9 @@ class BaseJsonConverter {
     }
   }
 
-  implicit def gameConfigProvider = new Writes[GameConfigProviderImpl] {
+  implicit def gameConfigProviderWriter = new Writes[GameConfigProviderImpl] {
     def writes(config: GameConfigProviderImpl) = Json.obj(
-      "gameObjects" -> gameObjects.writes(config.gameObjects),
+      "gameObjects" -> gameObjectsWriter.writes(config.gameObjects),
       "attackSoundPath" -> config.attackSoundPath,
       "openingBackgroundImagePath" -> config.openingBackgroundImagePath,
       "levelBackgroundImagePath" -> config.levelBackgroundImagePath,

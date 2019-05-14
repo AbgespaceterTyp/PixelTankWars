@@ -33,7 +33,7 @@ object Routes {
             path(IntNumber / IntNumber) { (rowIndex, columnIndex) =>
               complete {
                 MainApp.controller.cellContent(rowIndex, columnIndex) match {
-                  case Some(value) => JsonConverter.gameObject.writes(value).toString()
+                  case Some(value) => JsonConverter.gameObjectWriter.writes(value).toString()
                   case None => ""
                 }
               }

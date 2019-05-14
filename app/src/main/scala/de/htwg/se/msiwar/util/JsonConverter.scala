@@ -10,7 +10,7 @@ import scala.collection.mutable
 
 object JsonConverter extends BaseJsonConverter{
 
-  implicit def playerWon = new Writes[PlayerWon] {
+  implicit def playerWonWriter = new Writes[PlayerWon] {
     override def writes(playerWonEvent: PlayerWon): JsValue = {
       Json.obj(
         "eventType" -> PlayerWon.getClass.getSimpleName,
@@ -20,7 +20,7 @@ object JsonConverter extends BaseJsonConverter{
     }
   }
 
-  implicit def turnStarted = new Writes[TurnStarted] {
+  implicit def turnStartedWriter = new Writes[TurnStarted] {
     override def writes(turnStartedEvent: TurnStarted): JsValue = {
       Json.obj(
         "eventType" -> TurnStarted.getClass.getSimpleName,
@@ -33,7 +33,7 @@ object JsonConverter extends BaseJsonConverter{
     }
   }
 
-  implicit def attackResult = new Writes[AttackResult] {
+  implicit def attackResultWriter = new Writes[AttackResult] {
     override def writes(attackResultEvent: AttackResult): JsValue = {
       Json.obj(
         "eventType" -> AttackResult.getClass.getSimpleName,
@@ -56,7 +56,7 @@ object JsonConverter extends BaseJsonConverter{
         }
       }
     }
-    JsonConverter.gameObjects.writes(list.toList)
+    JsonConverter.gameObjectsWriter.writes(list.toList)
   }
 
   def actionsForPlayerToJson(playerId: Int): JsValue = {

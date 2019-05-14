@@ -41,7 +41,7 @@ class GameGenerationActor(implicit system: ActorSystem, implicit val mat: Materi
             "images/background_woodlands.png", "images/background_actionbar.png", "images/hit.png",
             "images/app_icon.png", genRowCount, genColCount)
 
-          val data = jsonConverter.gameConfigProvider.writes(newGameConfigProvider).toString()
+          val data = jsonConverter.gameConfigProviderWriter.writes(newGameConfigProvider).toString()
           println("Sending data: " + data)
           sendJson(data)
         }
