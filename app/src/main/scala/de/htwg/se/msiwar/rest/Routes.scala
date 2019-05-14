@@ -12,7 +12,7 @@ import scala.util.{Failure, Success}
 
 object Routes {
   implicit val um:Unmarshaller[HttpEntity, GameConfigProviderImpl] = {
-    Unmarshaller.byteStringUnmarshaller.mapWithCharset { (data, charset) =>
+    Unmarshaller.byteStringUnmarshaller.map { (data) =>
       JsonConverter.gameConfigProviderReader.reads(Json.parse(data.toArray)).get
     }
   }
