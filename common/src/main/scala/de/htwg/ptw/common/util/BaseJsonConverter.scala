@@ -66,7 +66,7 @@ class BaseJsonConverter {
     implicit def gameObjectsReader = new Reads[List[GameObject]] {
       override def reads(json: JsValue): JsResult[List[GameObject]] = {
         JsSuccess(
-          List()
+          (json \\ "gameObject").map(_.as[GameObject]).toList,
         )
       }
     }
