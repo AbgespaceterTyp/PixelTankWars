@@ -2,7 +2,7 @@ package de.htwg.ptw.common.model
 
 import de.htwg.ptw.common.Direction.Direction
 
-class GameObject(val name: String, val imagePath: String, val position: Position)
+abstract class GameObject(val name: String, val imagePath: String, val position: Position)
 
 case class BlockObject(override val name: String, override val imagePath: String, override val position: Position) extends GameObject(name, imagePath, position)
 

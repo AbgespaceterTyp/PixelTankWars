@@ -1,6 +1,7 @@
 package de.htwg.ptw.common.util
 
-import de.htwg.ptw.common.model.{GameObject, Position}
+import de.htwg.ptw.common.Direction
+import de.htwg.ptw.common.model._
 import play.api.libs.json._
 
 class BaseJsonConverter {
@@ -21,7 +22,7 @@ class BaseJsonConverter {
   implicit def positionReader = new Reads[Position] {
     override def reads(json: JsValue): JsResult[Position] = {
       JsSuccess(
-        new Position(
+        Position(
           (json \ "rowIdx").as[Int],
           (json \ "columnIdx").as[Int]
         )
@@ -37,23 +38,75 @@ class BaseJsonConverter {
   }
 
   implicit def gameObject = new Writes[GameObject] {
-    def writes(playerObject: GameObject) = Json.obj(
-      "gameObject" -> Json.obj(
-        "name" -> playerObject.name,
-        "imagePath" -> playerObject.imagePath,
-        "position" -> position.writes(playerObject.position)
-      )
-    )
+    def writes(gameObject: GameObject) = {
+      writeGameObjectByType(gameObject)
+    }
   }
 
-  implicit def gameObjectReader = new Reads[GameObject] {
-    override def reads(json: JsValue): JsResult[GameObject] = {
+  private def writeGameObjectByType(gameObject: GameObject): JsValue = {
+    gameObject match {
+      case player: PlayerObject => {
+        Json.obj(
+          "playerObject" -> Json.obj(
+            "name" -> player.name,
+            "imagePath" -> player.imagePath,
+            "position" -> position.writes(player.position),
+            "viewDirection" -> Direction.DOWN.toString, // TODO create reader/writer for it
+            "playerNumber" -> player.playerNumber,
+            "wonImagePath" -> player.wonImagePath,
+            "actionPoints" -> player.actionPoints,
+            "maxActionPoints" -> player.maxActionPoints,
+            "healthPoints" -> player.healthPoints,
+            "maxHealthPoints" -> player.maxHealthPoints,
+            //actions: List[Action] // TODO create reader/writer for it
+          ))
+      }
+      case block: BlockObject => {
+        Json.obj(
+          "blockObject" -> Json.obj(
+            "name" -> block.name,
+            "imagePath" -> block.imagePath,
+            "position" -> position.writes(block.position)
+          ))
+      }
+      case gameObj: GameObject => {
+        Json.obj(
+          "gameObject" -> Json.obj(
+            "name" -> gameObj.name,
+            "imagePath" -> gameObj.imagePath,
+            "position" -> position.writes(gameObj.position)
+          ))
+      }
+    }
+  }
+
+  implicit def blockObjectReader = new Reads[BlockObject] {
+    override def reads(json: JsValue): JsResult[BlockObject] = {
       JsSuccess(
-        new GameObject(
+        BlockObject(
           (json \ "name").as[String],
           (json \ "imagePath").as[String],
           (json \ "position").as[Position])
       )
+    }
+  }
+
+  implicit def playerObjectReader = new Reads[PlayerObject] {
+    override def reads(json: JsValue): JsResult[PlayerObject] = {
+      JsSuccess(
+        PlayerObject(
+          (json \ "name").as[String],
+          (json \ "imagePath").as[String],
+          (json \ "position").as[Position],
+          Direction.DOWN, // TODO create reader/writer for it
+          (json \ "playerNumber").as[Int],
+          (json \ "wonImagePath").as[String],
+          (json \ "actionPoints").as[Int],
+          (json \ "maxActionPoints").as[Int],
+          (json \ "healthPoints").as[Int],
+          (json \ "maxHealthPoints").as[Int],
+          List[Action]() // TODO create reader/writer for it
+        ))
     }
   }
 
@@ -63,13 +116,14 @@ class BaseJsonConverter {
     }
   }
 
-    implicit def gameObjectsReader = new Reads[List[GameObject]] {
-      override def reads(json: JsValue): JsResult[List[GameObject]] = {
-        JsSuccess(
-          (json \\ "gameObject").map(_.as[GameObject]).toList,
-        )
-      }
+  implicit def gameObjectsReader = new Reads[List[GameObject]] {
+    override def reads(json: JsValue): JsResult[List[GameObject]] = {
+      JsSuccess(
+        (json \\ "playerObject").map(_.as[PlayerObject]).toList ++
+          (json \\ "blockObject").map(_.as[BlockObject]).toList
+      )
     }
+  }
 
   implicit def gameConfigProvider = new Writes[GameConfigProviderImpl] {
     def writes(config: GameConfigProviderImpl) = Json.obj(
