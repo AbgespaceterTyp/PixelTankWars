@@ -15,7 +15,6 @@ import scala.util.{Failure, Success}
 class GameGeneratorApp() {
   implicit val system = ActorSystem()
   implicit val materializer = ActorMaterializer()
-  // needed for the future flatMap/onComplete in the end
   implicit val executionContext = system.dispatcher
 
   def generate(rowCount: Int, colCount: Int): Unit = {
@@ -43,10 +42,12 @@ class GameGenerationActor(implicit system: ActorSystem, implicit val mat: Materi
             "images/app_icon.png", genRowCount, genColCount)
 
           val data = jsonConverter.gameConfigProvider.writes(newGameConfigProvider).toString()
+          println("Sending data: " + data)
           sendJson(data)
         }
         case None => {
           // Send empty result when no valid game configuration has been generated
+          println("No valid configuration has been generated, sending empty data")
           sendJson("")
         }
       }
@@ -61,7 +62,7 @@ class GameGenerationActor(implicit system: ActorSystem, implicit val mat: Materi
 
     responseFuture
       .onComplete {
-        case Success(res) => println(res)
+        case Success(res) => println("Result: " + res)
         case Failure(restError) => sys.error("Failed to send game configuration: " + restError)
       }
   }
