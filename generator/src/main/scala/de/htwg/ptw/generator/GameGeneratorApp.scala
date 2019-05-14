@@ -7,8 +7,7 @@ import akka.http.scaladsl.model.MediaTypes._
 import akka.http.scaladsl.model.{HttpEntity, HttpRequest, HttpResponse}
 import akka.routing.RoundRobinPool
 import akka.stream.ActorMaterializer
-import de.htwg.ptw.common.util.GameConfigProviderImpl
-import de.htwg.ptw.generator.util.JsonConverter
+import de.htwg.ptw.common.util.{BaseJsonConverter, GameConfigProviderImpl}
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
@@ -27,6 +26,8 @@ class GameGeneratorApp() {
 
 class GameGenerationActor() extends Actor {
   private val workerRouter = context.actorOf(Props[GameGenerationWorker].withRouter(RoundRobinPool(10)), name = "workerRouter")
+  private val jsonConverter = new BaseJsonConverter
+
   implicit val system = ActorSystem()
   implicit val materializer = ActorMaterializer()
   // needed for the future flatMap/onComplete in the end
@@ -46,7 +47,7 @@ class GameGenerationActor() extends Actor {
             "images/background_woodlands.png", "images/background_actionbar.png", "images/hit.png",
             "images/app_icon.png", genRowCount, genColCount)
 
-          val data = JsonConverter.gameConfigProvider.writes(newGameConfigProvider).toString()
+          val data = jsonConverter.gameConfigProvider.writes(newGameConfigProvider).toString()
           sendJson(data)
         }
         case None => {
