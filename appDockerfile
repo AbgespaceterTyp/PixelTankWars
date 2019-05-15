@@ -1,14 +1,14 @@
-FROM openjdk:7-jdk
+FROM openjdk:8-jdk
 
 # Generic
 RUN apt-get update
 RUN apt-get -y install curl tar bash apt-transport-https
 RUN apt-get -y install libfontconfig
 # Scala
-RUN wget http://www.scala-lang.org/files/archive/scala-2.9.1-1.tgz
-RUN tar zxf scala-2.9.1-1.tgz
-RUN mv scala-2.9.1-1 /usr/share
-RUN ln -s /usr/share/scala-2.9.1-1 /usr/share/scala
+RUN wget http://www.scala-lang.org/files/archive/scala-2.12.6.tgz
+RUN tar zxf scala-2.12.6.tgz
+RUN mv scala-2.12.6 /usr/share
+RUN ln -s /usr/share/scala-2.12.6 /usr/share/scala
 RUN ln -s /usr/share/scala/bin/scala /usr/bin/scala
 RUN ln -s /usr/share/scala/bin/scalac /usr/bin/scalac
 RUN ln -s /usr/share/scala/bin/fsc /usr/bin/fsc
@@ -21,7 +21,7 @@ RUN apt-get update
 RUN apt-get install sbt
 
 # NPM
-RUN apt-get -y install npm
+#RUN apt-get -y install npm
 # Maven
 ARG MAVEN_VERSION=3.3.9
 ARG USER_HOME_DIR="/root"
