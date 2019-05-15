@@ -18,11 +18,33 @@
 		<akka.http.version>10.1.8</akka.http.version>
 	</properties>
 
-	<modules>
-		<module>app</module>
-		<module>generator</module>
-		<module>common</module>
-	</modules>
+	<profiles>
+		<profile>
+			<id>develop</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>app</module>
+				<module>generator</module>
+				<module>common</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>app</id>
+			<modules>
+				<module>common</module>
+				<module>app</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>generator</id>
+			<modules>
+                <module>common</module>
+                <module>generator</module>
+			</modules>
+		</profile>
+	</profiles>
 
 	<build>
 		<sourceDirectory>src/main/scala</sourceDirectory>
