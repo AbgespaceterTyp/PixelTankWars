@@ -43,7 +43,7 @@ class Tui(controller: Controller) extends Reactor {
       case "a" | "A" => printUserActions()
       case "t" | "T" => printActivePlayer()
       case executeActionRe(actionId: String, direction: String) => executeAction(actionId.toInt, direction)
-      case _ => println("Unknown Command")
+      case _ => println("Unknown Command: " + input)
     }
     continue
   }
