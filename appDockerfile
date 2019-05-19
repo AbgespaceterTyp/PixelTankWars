@@ -1,4 +1,8 @@
-FROM openjdk:8-jdk
+###############################################################
+###########					Buildpart				###########
+###############################################################
+
+FROM openjdk:8-jdk as builder
 
 # Generic
 RUN apt-get update
@@ -36,7 +40,37 @@ ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
 
 VOLUME "$USER_HOME_DIR/.m2"
 
-COPY . /PixelTankWars
-WORKDIR /PixelTankWars
+RUN mkdir -p /build
+WORKDIR /build
+COPY . /build
 
 CMD ["mvn", "clean", "install", "-P", "app"]
+
+###############################################################
+###########					Runtimepart				###########
+###############################################################
+
+FROM openjdk:11-slim as runtime
+EXPOSE 8080
+#Set app home folder
+ENV APP_HOME /app
+#Possibility to set JVM options (https://www.oracle.com/technetwork/java/javase/tech/vmoptions-jsp-140102.html)
+ENV JAVA_OPTS=""
+ 
+#Create base app folder
+RUN mkdir $APP_HOME
+#Create folder to save configuration files
+RUN mkdir $APP_HOME/config
+#Create folder with application logs
+RUN mkdir $APP_HOME/log
+ 
+VOLUME $APP_HOME/log
+VOLUME $APP_HOME/config
+ 
+WORKDIR $APP_HOME
+#Copy executable jar file from the builder image
+COPY --from=builder /build/app/target/app-0.0.1-SNAPSHOT.one-jar.jar app.jar
+ 
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar app.jar" ]
+#Second option using shell form:
+#ENTRYPOINT exec java $JAVA_OPTS -jar app.jar $0 $@
