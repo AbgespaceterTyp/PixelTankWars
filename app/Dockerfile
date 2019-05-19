@@ -44,15 +44,14 @@ RUN mkdir -p /build
 WORKDIR /build
 COPY . /build
 
-CMD ["mvn", "clean", "install", "-P", "generator"]
-RUN ls generator/target
+CMD ["mvn", "clean", "install", "-P", "app"]
 
 ###############################################################
 ###########					Runtimepart				###########
 ###############################################################
 
 FROM openjdk:11-slim as runtime
-EXPOSE 8081
+EXPOSE 8080
 #Set app home folder
 ENV APP_HOME /app
 #Possibility to set JVM options (https://www.oracle.com/technetwork/java/javase/tech/vmoptions-jsp-140102.html)
@@ -70,8 +69,8 @@ VOLUME $APP_HOME/config
  
 WORKDIR $APP_HOME
 #Copy executable jar file from the builder image
-COPY --from=builder /build/generator/target/generator.jar generator.jar
+COPY --from=builder /build/target/app.jar app.jar
  
-ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar generator.jar" ]
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar app.jar" ]
 #Second option using shell form:
-#ENTRYPOINT exec java $JAVA_OPTS -jar generator.jar $0 $@
+#ENTRYPOINT exec java $JAVA_OPTS -jar app.jar $0 $@
