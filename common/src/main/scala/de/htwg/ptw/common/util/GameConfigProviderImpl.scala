@@ -14,9 +14,13 @@ case class GameConfigProviderImpl(gameObjects: List[GameObject], attackSoundPath
                                   appIconImagePath: String, rowCount: Int, colCount: Int) extends GameConfigProvider {
 
   def listScenarios: List[String] = {
-    // TODO fix access issues when running in docker
-    //FileLoader.loadFilesFromDirPath("/scenarios").sorted
-    List[String]()
+    Try(FileLoader.loadFilesFromDirPath("/scenarios").sorted) match {
+      case Success(scenarios) => scenarios
+      case Failure(exception) => {
+        println("Failed to load scenariolist " + exception.getMessage)
+        List[String]()
+      }
+    }
   }
 
   def loadFromFile(configFilePath: String): GameConfigProvider = {
