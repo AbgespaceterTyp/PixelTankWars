@@ -9,9 +9,7 @@ import de.htwg.se.msiwar.model._
 import de.htwg.se.msiwar.rest.WebServer
 
 object MainApp {
-  var gameConfigProvider: GameConfigProvider = GameConfigProviderImpl(List[GameObject](), "", "", "", "", "", "", 1, 1)
-  val scenarioName: String = gameConfigProvider.listScenarios.head
-  gameConfigProvider = gameConfigProvider.loadFromFile(scenarioName)
+  var gameConfigProvider: GameConfigProvider = GameConfigProviderImpl(List[GameObject](), "", "images/background_opening.png", "", "", "", "", 1, 1)
 
   val createdModel = GameModelImpl(gameConfigProvider, GameBoard(gameConfigProvider.rowCount, gameConfigProvider.colCount,
     gameConfigProvider.gameObjects), Option.empty[Action], 1, 1)
