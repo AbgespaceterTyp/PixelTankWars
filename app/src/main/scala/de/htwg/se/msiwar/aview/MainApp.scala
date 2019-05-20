@@ -11,7 +11,8 @@ import de.htwg.se.msiwar.model._
 import de.htwg.se.msiwar.rest.WebServer
 
 object MainApp {
-  var gameConfigProvider: GameConfigProvider = GameConfigProviderImpl(List[GameObject](), "", "images/background_opening.png", "", "", "", "", 1, 1)
+  var gameConfigProvider: GameConfigProvider = GameConfigProviderImpl(List[GameObject](), "sounds/explosion.wav", "images/background_opening.png",
+    "", "images/background_actionbar.png", "images/hit.png", "images/app_icon.png", 1, 1)
 
   val createdModel = GameModelImpl(gameConfigProvider, GameBoard(gameConfigProvider.rowCount, gameConfigProvider.colCount,
     gameConfigProvider.gameObjects), Option.empty[Action], 1, 1)
