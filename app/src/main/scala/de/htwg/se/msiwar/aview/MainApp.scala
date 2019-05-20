@@ -10,6 +10,8 @@ import de.htwg.se.msiwar.controller.ControllerImpl
 import de.htwg.se.msiwar.model._
 import de.htwg.se.msiwar.rest.WebServer
 
+import scala.io.StdIn
+
 object MainApp {
   var gameConfigProvider: GameConfigProvider = GameConfigProviderImpl(List[GameObject](), "sounds/explosion.wav", "images/background_opening.png",
     "", "images/background_actionbar.png", "images/hit.png", "images/app_icon.png", 1, 1)
@@ -37,6 +39,6 @@ object MainApp {
   thread.start()
 
   def main(args: Array[String]): Unit = {
-    while (tui.executeCommand(readLine())) {}
+    while (tui.executeCommand(StdIn.readLine())) {}
   }
 }
