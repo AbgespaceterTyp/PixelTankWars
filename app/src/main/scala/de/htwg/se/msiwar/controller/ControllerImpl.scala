@@ -166,7 +166,7 @@ case class ControllerImpl(var model: GameModel) extends Controller {
   override def startRandomGame(): Unit = {
     val rowCount = Random.nextInt(20) + 1 // Eliminate 0
     val columnCount = Random.nextInt(20) + 1 // Eliminate 0
-    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = "http://localhost:8081/generate/" + rowCount + "/" + columnCount))
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = "http://generator:8081/generate/" + rowCount + "/" + columnCount))
 
     responseFuture
       .onComplete {
