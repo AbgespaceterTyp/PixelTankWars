@@ -1,4 +1,4 @@
-package de.htwg.se.msiwar.aview.db
+package de.htwg.se.msiwar.aview.db.model
 
 import slick.jdbc.H2Profile.api._
 
