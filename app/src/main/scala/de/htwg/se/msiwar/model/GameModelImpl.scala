@@ -397,10 +397,10 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
   }
 
   override def save: Future[Int] = {
-    new GameConfigDao().insert(new GameConfig(gameConfigProvider))
+    GameConfigDao.insert(new GameConfig(gameConfigProvider))
   }
 
   override def load(id: Int): Future[GameConfig] = {
-    new GameConfigDao().findById(id)
+    GameConfigDao.findById(id)
   }
 }
