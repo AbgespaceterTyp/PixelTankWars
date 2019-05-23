@@ -1,6 +1,6 @@
-package de.htwg.se.msiwar.aview.db
+package de.htwg.se.msiwar.db
 
-import de.htwg.se.msiwar.aview.db.model.{GameConfig, GameConfigTable, GameObjectConfigTable}
+import de.htwg.se.msiwar.db.model.{GameConfig, GameConfigTable, GameObjectConfigTable}
 import slick.jdbc.H2Profile.api._
 
 import scala.concurrent.Future
@@ -11,7 +11,7 @@ class GameConfigDao(implicit session: Session) {
   private lazy val gameObjs = TableQuery[GameObjectConfigTable]
 
   private def findByIdQuery(id: Int) : Query[GameConfigTable, GameConfig, Seq] = {
-    gameConfigs.filter(f => f.id == id)
+    gameConfigs.filter(f => f.id === id)
   }
 
   def findById(id: Int) : Future[GameConfig]  = {

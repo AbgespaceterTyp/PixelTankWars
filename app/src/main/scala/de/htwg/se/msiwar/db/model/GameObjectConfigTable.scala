@@ -1,4 +1,4 @@
-package de.htwg.se.msiwar.aview.db.model
+package de.htwg.se.msiwar.db.model
 
 import de.htwg.ptw.common.model.{BlockObject, GameObject, PlayerObject}
 import slick.jdbc.H2Profile.api._
