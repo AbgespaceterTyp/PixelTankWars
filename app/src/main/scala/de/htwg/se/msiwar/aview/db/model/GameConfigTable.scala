@@ -1,10 +1,14 @@
 package de.htwg.se.msiwar.aview.db.model
 
+import de.htwg.ptw.common.util.GameConfigProvider
 import slick.jdbc.H2Profile.api._
 
 case class GameConfig(attackSoundPath: String, openingBackgroundImagePath: String, levelBackgroundImagePath: String,
                       actionbarBackgroundImagePath:String, attackImagePath: String, appIconImagePath: String,
-                      rowCount: Int, colCount: Int, id: Option[Int] = None)
+                      rowCount: Int, colCount: Int, id: Option[Int] = None) {
+    def this(gcp: GameConfigProvider) = this(gcp.attackSoundPath, gcp.openingBackgroundImagePath, gcp.levelBackgroundImagePath,
+        gcp.actionbarBackgroundImagePath, gcp.attackImagePath, gcp.appIconImagePath, gcp.rowCount, gcp.colCount)
+}
 
 class GameConfigTable(tag: Tag) extends Table[GameConfig](tag, "GAMECONFIGS") {
     // Auto Increment the id primary key column
