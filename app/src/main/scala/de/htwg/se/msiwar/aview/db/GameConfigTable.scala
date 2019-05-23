@@ -1,6 +1,6 @@
 package de.htwg.se.msiwar.aview.db
 
-import slick.driver.H2Driver.api._
+import slick.jdbc.H2Profile.api._
 
 case class GameConfig(attackSoundPath: String, openingBackgroundImagePath: String, levelBackgroundImagePath: String,
                       actionbarBackgroundImagePath:String, attackImagePath: String, appIconImagePath: String,
