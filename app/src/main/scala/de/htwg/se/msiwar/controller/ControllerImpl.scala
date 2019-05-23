@@ -6,8 +6,9 @@ import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import akka.stream.ActorMaterializer
 import de.htwg.ptw.common.Direction.Direction
 import de.htwg.ptw.common.model.GameObject
-import de.htwg.ptw.common.util.GameConfigProvider
+import de.htwg.ptw.common.util.{GameConfigProvider, GameConfigProviderImpl}
 import de.htwg.se.msiwar.model._
+
 import scala.concurrent.Future
 import scala.swing.event.Event
 import scala.util.{Failure, Random, Success}
@@ -184,6 +185,25 @@ case class ControllerImpl(var model: GameModel) extends Controller {
         publish(TurnStarted(model.activePlayerNumber))
       }
       case None => publish(CouldNotGenerateGame())
+    }
+  }
+
+  override def save: Unit = {
+    model.save.onComplete{
+      case Success(res) => println("Successfully saved game state with id: " + res)
+      case Failure(restError)   => sys.error("Failed to save game state: " + restError)
+    }
+  }
+
+  override def load(id: Int): Unit = {
+    model.load(id).onComplete{
+      case Success(gameConfig) => {
+        val loadedConfig = GameConfigProviderImpl(List[GameObject](), gameConfig.attackSoundPath, gameConfig.openingBackgroundImagePath,
+          gameConfig.levelBackgroundImagePath, gameConfig.actionbarBackgroundImagePath, gameConfig.attackImagePath,
+          gameConfig.appIconImagePath, gameConfig.rowCount, gameConfig.colCount)
+        startGame(Option(loadedConfig))
+      }
+      case Failure(error)   => sys.error("Failed to load game with id: " + id + ", got error: " + error)
     }
   }
 }

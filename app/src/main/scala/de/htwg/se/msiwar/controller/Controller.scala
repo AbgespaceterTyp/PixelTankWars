@@ -3,6 +3,7 @@ package de.htwg.se.msiwar.controller
 import de.htwg.ptw.common.Direction.Direction
 import de.htwg.ptw.common.model.GameObject
 import de.htwg.ptw.common.util.GameConfigProvider
+import de.htwg.se.msiwar.db.model.GameConfig
 import de.htwg.se.msiwar.model.GameModel
 
 import scala.concurrent.Future
@@ -198,4 +199,15 @@ trait Controller extends Publisher {
     * Starts a newly generated game
     */
   def startRandomGame(): Unit
+
+  /**
+    * Saves the current game state
+    */
+  def save: Unit
+
+  /**
+    * Loads the game state from given id
+    * @param id
+    */
+  def load(id: Int) : Unit
 }

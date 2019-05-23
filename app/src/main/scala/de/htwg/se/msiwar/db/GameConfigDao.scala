@@ -5,7 +5,7 @@ import slick.jdbc.H2Profile.api._
 
 import scala.concurrent.Future
 
-class GameConfigDao(implicit session: Session) {
+class GameConfigDao {
   private lazy val db = Database.forConfig("h2mem1")
   private lazy val gameConfigs = TableQuery[GameConfigTable]
   private lazy val gameObjs = TableQuery[GameObjectConfigTable]

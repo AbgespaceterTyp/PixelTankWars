@@ -5,6 +5,8 @@ import de.htwg.ptw.common.Direction.Direction
 import de.htwg.ptw.common.model._
 import de.htwg.ptw.common.util.GameConfigProvider
 import de.htwg.ptw.common.{Direction, model}
+import de.htwg.se.msiwar.db.GameConfigDao
+import de.htwg.se.msiwar.db.model.GameConfig
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -392,5 +394,13 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
       case Some(player) => player.healthPoints
       case None => 0
     }
+  }
+
+  override def save: Future[Int] = {
+    new GameConfigDao().insert(new GameConfig(gameConfigProvider))
+  }
+
+  override def load(id: Int): Future[GameConfig] = {
+    new GameConfigDao().findById(id)
   }
 }

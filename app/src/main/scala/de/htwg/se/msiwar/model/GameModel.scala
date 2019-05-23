@@ -3,6 +3,7 @@ package de.htwg.se.msiwar.model
 import de.htwg.ptw.common.Direction.Direction
 import de.htwg.ptw.common.model.GameObject
 import de.htwg.ptw.common.util.GameConfigProvider
+import de.htwg.se.msiwar.db.model.GameConfig
 
 import scala.concurrent.Future
 import scala.swing.Publisher
@@ -192,4 +193,8 @@ trait GameModel extends Publisher {
     * @return the winner id (=player number) if game is won otherwise returns nothing
     */
   def winnerId: Option[Int]
+
+  def save: Future[Int]
+
+  def load(id: Int) : Future[GameConfig]
 }
