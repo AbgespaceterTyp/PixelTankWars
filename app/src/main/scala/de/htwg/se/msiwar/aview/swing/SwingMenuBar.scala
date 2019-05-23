@@ -10,6 +10,14 @@ class SwingMenuBar(controller: Controller) extends MenuBar {
   contents += new Menu("Game") {
     mnemonic = Key.G
 
+    contents += new MenuItem(Action("Save...") {
+      controller.save
+    })
+
+    contents += new MenuItem(Action("Load...") {
+      controller.load(1)
+    })
+
     contents += new MenuItem(Action("Random Level...") {
       controller.startRandomGame()
     })
