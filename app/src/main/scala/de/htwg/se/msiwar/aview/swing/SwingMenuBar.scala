@@ -27,8 +27,11 @@ class SwingMenuBar(controller: Controller) extends MenuBar {
     )
     contents += new Separator()
     contents += new MenuItem(Action("Save...") {
-      val saveGameNameDialog = Dialog.showInput(null, "Bitte eine Bezeichnung für den Spielstand eingeben", initial="Neues Spiel")
-      controller.save(saveGameNameDialog.get)
+      val saveGameNameDialog = Dialog.showInput(null, "Bitte eine Bezeichnung für den Spielstand eingeben:", initial="Neues Spiel")
+      saveGameNameDialog match {
+        case None => println("Keine Bezeichnung eingegeben, Spiel wird nicht gespeichert.")
+        case Some(saveGameName) => controller.save(saveGameName)
+      }
     })
 
     contents += new MenuItem(Action("Load...") {
