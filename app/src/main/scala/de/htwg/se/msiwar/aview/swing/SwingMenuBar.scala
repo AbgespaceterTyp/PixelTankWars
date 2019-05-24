@@ -3,22 +3,14 @@ package de.htwg.se.msiwar.aview.swing
 import de.htwg.se.msiwar.controller.Controller
 
 import scala.swing.event.Key
-import scala.swing.{Action, Menu, MenuBar, MenuItem, Separator}
+import scala.swing.{Action, Dialog, Menu, MenuBar, MenuItem, Separator}
 
 class SwingMenuBar(controller: Controller) extends MenuBar {
 
   contents += new Menu("Game") {
     mnemonic = Key.G
 
-    contents += new MenuItem(Action("Save...") {
-      controller.save
-    })
-
-    contents += new MenuItem(Action("Load...") {
-      controller.load(1)
-    })
-
-    contents += new MenuItem(Action("Random Level...") {
+    contents += new MenuItem(Action("Random Level") {
       controller.startRandomGame()
     })
 
@@ -33,6 +25,15 @@ class SwingMenuBar(controller: Controller) extends MenuBar {
       }
     }
     )
+    contents += new Separator()
+    contents += new MenuItem(Action("Save...") {
+      val saveGameNameDialog = Dialog.showInput(null, "Bitte eine Bezeichnung für den Spielstand eingeben", initial="Neues Spiel")
+      controller.save(saveGameNameDialog.get)
+    })
+
+    contents += new MenuItem(Action("Load...") {
+      controller.load(1)
+    })
   }
 
   contents += new Menu("Help") {

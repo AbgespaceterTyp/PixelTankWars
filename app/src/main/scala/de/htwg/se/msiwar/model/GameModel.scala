@@ -3,7 +3,7 @@ package de.htwg.se.msiwar.model
 import de.htwg.ptw.common.Direction.Direction
 import de.htwg.ptw.common.model.GameObject
 import de.htwg.ptw.common.util.GameConfigProvider
-import de.htwg.se.msiwar.db.model.GameConfig
+import de.htwg.se.msiwar.db.GameConfig
 
 import scala.concurrent.Future
 import scala.swing.Publisher
@@ -194,7 +194,17 @@ trait GameModel extends Publisher {
     */
   def winnerId: Option[Int]
 
-  def save: Future[Int]
+  /**
+    * Saves the current game state with the given name
+    * @param name the name for saving game state as
+    * @return the saved id
+    */
+  def save(name: String): Future[Int]
 
+  /**
+    * Loads the game state for given id
+    * @param id the id to load
+    * @return the GameConfig
+    */
   def load(id: Int) : Future[GameConfig]
 }

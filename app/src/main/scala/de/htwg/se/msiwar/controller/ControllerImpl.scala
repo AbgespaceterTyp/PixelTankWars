@@ -6,8 +6,10 @@ import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import akka.stream.ActorMaterializer
 import de.htwg.ptw.common.Direction.Direction
 import de.htwg.ptw.common.model.GameObject
-import de.htwg.ptw.common.util.{GameConfigProvider, GameConfigProviderImpl}
+import de.htwg.ptw.common.util.GameConfigProvider
 import de.htwg.se.msiwar.model._
+import de.htwg.se.msiwar.util.JsonConverter
+import play.api.libs.json.Json
 
 import scala.concurrent.Future
 import scala.swing.event.Event
@@ -188,8 +190,8 @@ case class ControllerImpl(var model: GameModel) extends Controller {
     }
   }
 
-  override def save: Unit = {
-    model.save.onComplete{
+  override def save(name: String): Unit = {
+    model.save(name).onComplete{
       case Success(res) => println("Successfully saved game state with id: " + res)
       case Failure(restError)   => sys.error("Failed to save game state: " + restError)
     }
@@ -198,10 +200,9 @@ case class ControllerImpl(var model: GameModel) extends Controller {
   override def load(id: Int): Unit = {
     model.load(id).onComplete{
       case Success(gameConfig) => {
-        val loadedConfig = GameConfigProviderImpl(List[GameObject](), gameConfig.attackSoundPath, gameConfig.openingBackgroundImagePath,
-          gameConfig.levelBackgroundImagePath, gameConfig.actionbarBackgroundImagePath, gameConfig.attackImagePath,
-          gameConfig.appIconImagePath, gameConfig.rowCount, gameConfig.colCount)
-        startGame(Option(loadedConfig))
+        val json = Json.parse(gameConfig.config)
+        val loadedConfigProvider = JsonConverter.gameConfigProviderReader.reads(json).get
+        startGame(Option(loadedConfigProvider))
       }
       case Failure(error)   => sys.error("Failed to load game with id: " + id + ", got error: " + error)
     }
