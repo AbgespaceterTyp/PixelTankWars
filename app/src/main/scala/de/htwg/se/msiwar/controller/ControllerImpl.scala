@@ -207,4 +207,8 @@ case class ControllerImpl(var model: GameModel) extends Controller {
       case Failure(error)   => sys.error("Failed to load game with id: " + id + ", got error: " + error)
     }
   }
+
+  override def saveGameIds: Future[Seq[Option[Int]]] = {
+    model.saveGameIds
+  }
 }

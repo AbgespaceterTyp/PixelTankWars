@@ -35,7 +35,11 @@ class SwingMenuBar(controller: Controller) extends MenuBar {
     })
 
     contents += new MenuItem(Action("Load...") {
-      controller.load(1)
+      val saveGameNameDialog = Dialog.showInput(null, "Bitte die Spielstand Id eingeben:", initial = "1")
+      saveGameNameDialog match {
+        case None => println("Keine ID eingegeben, Spiel wird nicht geladen.")
+        case Some(gameIdToLoad) => controller.load(gameIdToLoad.toInt)
+      }
     })
   }
 

@@ -207,4 +207,9 @@ trait GameModel extends Publisher {
     * @return the GameConfig
     */
   def load(id: Int) : Future[GameConfig]
+
+  /**
+    * @return the list with the current save game ids
+    */
+  def saveGameIds: Future[Seq[Option[Int]]]
 }

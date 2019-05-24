@@ -4,6 +4,7 @@ import slick.jdbc.H2Profile.api._
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 object GameConfigDao {
   private lazy val db = Database.forConfig("h2mem1")
@@ -11,6 +12,10 @@ object GameConfigDao {
 
   private def findByIdQuery(id: Int): Query[GameConfigTable, GameConfig, Seq] = {
     gameConfigs.filter(f => f.id === id)
+  }
+
+  def findAll: Future[Seq[Option[Int]]] = {
+    db.run(gameConfigs.result.map(_.map(f => f.id)))
   }
 
   def findById(id: Int): Future[GameConfig] = {

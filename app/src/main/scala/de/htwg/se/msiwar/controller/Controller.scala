@@ -209,4 +209,9 @@ trait Controller extends Publisher {
     * @param id the id to load game state for
     */
   def load(id: Int) : Unit
+
+  /**
+    * @return the list with the current save game ids
+    */
+  def saveGameIds: Future[Seq[Option[Int]]]
 }

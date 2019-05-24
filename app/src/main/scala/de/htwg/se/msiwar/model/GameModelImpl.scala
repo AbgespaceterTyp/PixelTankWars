@@ -408,4 +408,8 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
   override def load(id: Int): Future[GameConfig] = {
     GameConfigDao.findById(id)
   }
+
+  override def saveGameIds: Future[Seq[Option[Int]]] = {
+    GameConfigDao.findAll
+  }
 }
