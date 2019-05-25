@@ -15,9 +15,10 @@ object WebServer {
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext = system.dispatcher
 
-    val bindingFuture = Http().bindAndHandle(Routes.all, "0.0.0.0", 8081)
+    val bindingFuture = Http().bindAndHandle(Routes.all, "generator", 8081)
     println(s"Server online at http://generator:8081/")
-    StdIn.readLine() // let it run until user presses return
+    //StdIn.readLine() // let it run until user presses return
+    while (true){Thread.sleep(100)}
     bindingFuture
       .flatMap(_.unbind()) // trigger unbinding from the port
       .onComplete(_ => system.terminate()) // and shutdown when done

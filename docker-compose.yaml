@@ -1,0 +1,15 @@
+version: "2"
+services:
+  app:
+    build: ./app/
+    image: pixeltankwars_app
+    container_name: app
+    ports:
+      - "8080:8080"
+    stdin_open: true
+  generator:
+    build: ./generator/
+    image: pixeltankwars_generator
+    container_name: generator
+    ports:
+      - "8081:8081"

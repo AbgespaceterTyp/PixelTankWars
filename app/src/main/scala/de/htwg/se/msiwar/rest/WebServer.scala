@@ -14,9 +14,10 @@ class WebServer {
   implicit val executionContext = system.dispatcher
 
   def start {
-    val bindingFuture = Http().bindAndHandle(Routes.all, "0.0.0.0", 8080)
+    val bindingFuture = Http().bindAndHandle(Routes.all, "app", 8080)
     println(s"Server online at http://app:8080/")
-    StdIn.readLine() // let it run until user presses return
+    //StdIn.readLine() // let it run until user presses return
+    while (true){Thread.sleep(100)}
     bindingFuture
       .flatMap(_.unbind()) // trigger unbinding from the port
       .onComplete(_ => system.terminate()) // and shutdown when done
