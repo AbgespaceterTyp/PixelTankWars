@@ -198,4 +198,20 @@ trait Controller extends Publisher {
     * Starts a newly generated game
     */
   def startRandomGame(): Unit
+
+  /**
+    * Saves the current game state with the given name
+    */
+  def save(name: String): Unit
+
+  /**
+    * Loads the game state from given id
+    * @param id the id to load game state for
+    */
+  def load(id: Int) : Unit
+
+  /**
+    * @return the list with the current save game ids
+    */
+  def saveGameIds: Future[Seq[Option[Int]]]
 }

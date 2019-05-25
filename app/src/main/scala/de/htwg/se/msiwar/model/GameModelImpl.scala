@@ -3,8 +3,10 @@ package de.htwg.se.msiwar.model
 import de.htwg.ptw.common.ActionType._
 import de.htwg.ptw.common.Direction.Direction
 import de.htwg.ptw.common.model._
-import de.htwg.ptw.common.util.GameConfigProvider
+import de.htwg.ptw.common.util.{GameConfigProvider, GameConfigProviderImpl}
 import de.htwg.ptw.common.{Direction, model}
+import de.htwg.se.msiwar.db.{GameConfig, GameConfigDao}
+import de.htwg.se.msiwar.util.JsonConverter
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -392,5 +394,22 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
       case Some(player) => player.healthPoints
       case None => 0
     }
+  }
+
+  override def save(name: String): Future[Int] = {
+    gameConfigProvider match {
+      case gameConfigProviderImpl: GameConfigProviderImpl => {
+        val gameConfigToSave = GameConfig(name, JsonConverter.gameConfigProviderWriter.writes(gameConfigProviderImpl).toString())
+        GameConfigDao.insert(gameConfigToSave)
+      }
+    }
+  }
+
+  override def load(id: Int): Future[GameConfig] = {
+    GameConfigDao.findById(id)
+  }
+
+  override def saveGameIds: Future[Seq[Option[Int]]] = {
+    GameConfigDao.findAll
   }
 }
