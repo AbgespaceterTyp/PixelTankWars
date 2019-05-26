@@ -409,7 +409,7 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
     GameConfigDao.findById(id)
   }
 
-  override def saveGameIds: Future[Seq[Option[Int]]] = {
+  override def savedGameIds: Future[Seq[Option[Int]]] = {
     GameConfigDao.findAll
   }
 }

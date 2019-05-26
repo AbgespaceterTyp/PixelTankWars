@@ -209,6 +209,6 @@ case class ControllerImpl(var model: GameModel) extends Controller {
   }
 
   override def saveGameIds: Future[Seq[Option[Int]]] = {
-    model.saveGameIds
+    model.savedGameIds
   }
 }

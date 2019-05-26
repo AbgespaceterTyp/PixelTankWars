@@ -211,5 +211,5 @@ trait GameModel extends Publisher {
   /**
     * @return the list with the current save game ids
     */
-  def saveGameIds: Future[Seq[Option[Int]]]
+  def savedGameIds: Future[Seq[Option[Int]]]
 }
