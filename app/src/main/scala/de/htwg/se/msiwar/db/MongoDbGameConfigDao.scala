@@ -7,9 +7,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class MongoDbGameConfigDao extends BaseDao {
-  val mongoClient: MongoClient = MongoClient()
-  val database: MongoDatabase = mongoClient.getDatabase("pixeltankwars")
-  val collection: MongoCollection[Document] = database.getCollection("gameconfigs")
+  private val mongoClient: MongoClient = MongoClient()
+  private val database: MongoDatabase = mongoClient.getDatabase("pixeltankwars")
+  private val collection: MongoCollection[Document] = database.getCollection("gameconfigs")
 
   override def insert(gameConfig: GameConfig): Future[Int] = {
     Future {
@@ -35,6 +35,7 @@ class MongoDbGameConfigDao extends BaseDao {
 
       observable.subscribe(new Observer[Document] {
         override def onNext(result: Document): Unit = {
+          println("found result: " + result)
           val config =  Json.parse(result("config").toString)
           val name = Json.parse(result("name").toString)
           res = GameConfig(name.toString(), config.toString())
@@ -48,9 +49,9 @@ class MongoDbGameConfigDao extends BaseDao {
         }
       })
 
-      while (waitOnRes)
+      while (waitOnRes) {
         Thread.sleep(10)
-
+      }
       res
     }
   }
