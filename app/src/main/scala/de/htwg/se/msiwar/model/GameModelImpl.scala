@@ -410,8 +410,10 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
   }
 
   override def load(id: Int): Future[GameConfig] = {
-    val dao = new SlickGameConfigDao
-    dao.findById(id)
+    //    val dao = new SlickGameConfigDao
+    //    dao.findById(id)
+    val mongoDbDao = new MongoDbGameConfigDao
+    mongoDbDao.findById(id)
   }
 
   override def saveGameIds: Future[Seq[Option[Int]]] = {

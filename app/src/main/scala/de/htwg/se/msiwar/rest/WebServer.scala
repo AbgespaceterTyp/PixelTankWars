@@ -14,7 +14,7 @@ class WebServer {
   implicit val executionContext = system.dispatcher
 
   def start {
-    val bindingFuture = Http().bindAndHandle(Routes.all, "app", 8080)
+    val bindingFuture = Http().bindAndHandle(Routes.all, "localhost", 8080)
     println(s"Server online at http://app:8080/")
     while (true) {
       Thread.sleep(100)

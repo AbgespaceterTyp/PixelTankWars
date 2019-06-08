@@ -18,7 +18,9 @@ class MongoDbGameConfigDao extends BaseDao {
 
       observable.subscribe(new Observer[Completed] {
         override def onNext(result: Completed): Unit = println("Inserted")
+
         override def onError(e: Throwable): Unit = println("Failed")
+
         override def onComplete(): Unit = println("Completed")
       })
       1
@@ -31,14 +33,14 @@ class MongoDbGameConfigDao extends BaseDao {
     Future {
       var waitOnRes = true
       var res = GameConfig("", "")
-      val observable: Observable[Document] = collection.find().first()
+      val observable: Observable[Document] = collection.find().first
 
       observable.subscribe(new Observer[Document] {
         override def onNext(result: Document): Unit = {
           println("found result: " + result)
-          val config =  Json.parse(result("config").toString)
-          val name = Json.parse(result("name").toString)
-          res = GameConfig(name.toString(), config.toString())
+          val config = (Json.parse(result.toJson()) \ "config").get.as[String]
+          val name = (Json.parse(result.toJson()) \ "name").get.as[String]
+          res = GameConfig(name, config)
         }
 
         override def onError(e: Throwable): Unit = println("Failed")

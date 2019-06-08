@@ -52,7 +52,7 @@ class GameGenerationActor(implicit system: ActorSystem, implicit val mat: Materi
   def sendJson(data: String): Unit = {
     val request = HttpRequest(
       PUT,
-      uri = "http://app:8080/start",
+      uri = "http://localhost:8080/start",
       entity = HttpEntity(`application/json`, data))
     val responseFuture: Future[HttpResponse] = Http().singleRequest(request)
 
