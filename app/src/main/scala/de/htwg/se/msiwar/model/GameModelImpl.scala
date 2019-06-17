@@ -1,18 +1,19 @@
 package de.htwg.se.msiwar.model
 
+import com.google.inject.Inject
 import de.htwg.ptw.common.ActionType._
 import de.htwg.ptw.common.Direction.Direction
 import de.htwg.ptw.common.model._
 import de.htwg.ptw.common.util.{GameConfigProvider, GameConfigProviderImpl}
 import de.htwg.ptw.common.{Direction, model}
-import de.htwg.se.msiwar.db.{GameConfig, SlickGameConfigDao, MongoDbGameConfigDao}
+import de.htwg.se.msiwar.db.{BaseDao, GameConfig}
 import de.htwg.se.msiwar.util.JsonConverter
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.swing.event.Event
 
-case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: GameBoard, lastExecutedAction: Option[Action], playerNumber: Int, turnNumber: Int) extends GameModel {
+case class GameModelImpl @Inject()(gameConfigProvider: GameConfigProvider, gameBoard: GameBoard, lastExecutedAction: Option[Action], playerNumber: Int, turnNumber: Int, dao: BaseDao) extends GameModel {
 
   override def init(gameConfigProvider: GameConfigProvider): GameModel = {
     copy(gameConfigProvider, model.GameBoard(gameConfigProvider.rowCount, gameConfigProvider.colCount, gameConfigProvider.gameObjects), Option.empty[Action], 1, 1)
@@ -399,25 +400,17 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
   override def save(name: String): Future[Int] = {
     gameConfigProvider match {
       case gameConfigProviderImpl: GameConfigProviderImpl => {
-        // MongoDB
-        val mongoDbDao = new MongoDbGameConfigDao
-        mongoDbDao.insert(GameConfig(name, JsonConverter.gameConfigProviderWriter.writes(gameConfigProviderImpl).toString()))
-        // Slick
-        val dao = new SlickGameConfigDao
-        dao.insert(GameConfig(name, JsonConverter.gameConfigProviderWriter.writes(gameConfigProviderImpl).toString()))
+        val gameConfigToSave = GameConfig(name, JsonConverter.gameConfigProviderWriter.writes(gameConfigProviderImpl).toString())
+        dao.insert(gameConfigToSave)
       }
     }
   }
 
   override def load(id: Int): Future[GameConfig] = {
-    //    val dao = new SlickGameConfigDao
-    //    dao.findById(id)
-    val mongoDbDao = new MongoDbGameConfigDao
-    mongoDbDao.findById(id)
+    dao.findById(id)
   }
 
   override def saveGameIds: Future[Seq[Option[Int]]] = {
-    val dao = new SlickGameConfigDao
     dao.findAll
   }
 }

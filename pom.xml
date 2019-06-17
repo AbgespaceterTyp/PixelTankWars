@@ -122,6 +122,17 @@
             <artifactId>play-json_${scala.compat.version}</artifactId>
             <version>2.7.2</version>
         </dependency>
+        <!-- DI Frameworks -->
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.codingwell</groupId>
+            <artifactId>scala-guice_${scala.compat.version}</artifactId>
+            <version>4.1.0</version>
+        </dependency>
         <!-- Akka -->
         <dependency>
             <groupId>com.typesafe.akka</groupId>
