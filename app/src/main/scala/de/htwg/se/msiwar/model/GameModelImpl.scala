@@ -1,18 +1,19 @@
 package de.htwg.se.msiwar.model
 
+import com.google.inject.Inject
 import de.htwg.ptw.common.ActionType._
 import de.htwg.ptw.common.Direction.Direction
 import de.htwg.ptw.common.model._
 import de.htwg.ptw.common.util.{GameConfigProvider, GameConfigProviderImpl}
 import de.htwg.ptw.common.{Direction, model}
-import de.htwg.se.msiwar.db.{GameConfig, GameConfigDao}
+import de.htwg.se.msiwar.db.{BaseDao, GameConfig}
 import de.htwg.se.msiwar.util.JsonConverter
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.swing.event.Event
 
-case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: GameBoard, lastExecutedAction: Option[Action], playerNumber: Int, turnNumber: Int) extends GameModel {
+case class GameModelImpl @Inject()(gameConfigProvider: GameConfigProvider, gameBoard: GameBoard, lastExecutedAction: Option[Action], playerNumber: Int, turnNumber: Int, dao: BaseDao) extends GameModel {
 
   override def init(gameConfigProvider: GameConfigProvider): GameModel = {
     copy(gameConfigProvider, model.GameBoard(gameConfigProvider.rowCount, gameConfigProvider.colCount, gameConfigProvider.gameObjects), Option.empty[Action], 1, 1)
@@ -400,16 +401,16 @@ case class GameModelImpl(gameConfigProvider: GameConfigProvider, gameBoard: Game
     gameConfigProvider match {
       case gameConfigProviderImpl: GameConfigProviderImpl => {
         val gameConfigToSave = GameConfig(name, JsonConverter.gameConfigProviderWriter.writes(gameConfigProviderImpl).toString())
-        GameConfigDao.insert(gameConfigToSave)
+        dao.insert(gameConfigToSave)
       }
     }
   }
 
   override def load(id: Int): Future[GameConfig] = {
-    GameConfigDao.findById(id)
+    dao.findById(id)
   }
 
-  override def savedGameIds: Future[Seq[Option[Int]]] = {
-    GameConfigDao.findAll
+  override def saveGameIds: Future[Seq[Option[Int]]] = {
+    dao.findAll
   }
 }
